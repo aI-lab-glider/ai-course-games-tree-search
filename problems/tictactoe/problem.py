@@ -52,10 +52,8 @@ class TicTacToeProblem(Problem[TicTacToeState, TicTacToeAction]):
             return -1
         return 0
 
-    def is_terminal_state(self, state: TicTacToeState, state_value: float) -> bool:
-        if state_value in [-1, 1] or ' ' not in state.board:
-            return True
-        return False
+    def is_terminal_state(self, state: TicTacToeState) -> bool:
+        return self.value_for(state) in [-1, 1] or ' ' not in state.board
 
 
 

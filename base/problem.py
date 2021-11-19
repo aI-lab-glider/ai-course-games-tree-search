@@ -26,7 +26,7 @@ class Problem(ABC, Generic[S, A]):
         raise NotImplementedError
 
     @abstractmethod
-    def is_terminal_state(self, state: S, state_value: float) -> bool:
+    def is_terminal_state(self, state: S) -> bool:
         """Returns is given state is a terminal state"""
         raise NotImplementedError
 

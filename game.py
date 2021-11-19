@@ -1,21 +1,27 @@
 from base.problem import Problem
 from base.bot import Bot
-from algorithms.minimax import Minimax
+from typing import Type
 
 
 class Game:
-    def __init__(self, problem: Problem, player_a: Bot, player_b: Bot):
+    def __init__(self, problem: Problem, player_a: Type[Bot], player_b: Type[Bot]):
         self.problem = problem
         self.current_state = self.problem.initial_state
-        self.player_a = player_a
-        self.player_b = player_b
-        self.player_a.problem = self.problem
-        self.player_b.problem = self.problem.switch_players()
+        self.player_a = player_a(self.problem)
+        self.player_b = player_b(self.problem.switch_players())
 
     def play(self):
-        while self.current_state:
+        while not self._is_game_end():
             self.current_state.show()
-            self.current_state = self.player_a.solve(self.current_state)
-            if self.current_state is not None:
-                self.current_state.show()
-                self.current_state = self.player_b.solve(self.current_state)
+            self._next_move(self.player_a)
+            self.current_state.show()
+            if not self._is_game_end():
+                self._next_move(self.player_b)
+
+    def _next_move(self, player: Bot):
+        self.current_state = self.problem.take_action(self.current_state, player.choose_action(self.current_state))
+
+    def _is_game_end(self):
+        return self.problem.is_terminal_state(self.current_state)
+
+
