@@ -1,12 +1,13 @@
 from base.state import State
+from base.action import Action
 from typing import List, TypeVar, Generic
 from abc import ABC, abstractmethod
 
 S = TypeVar('S', bound=State)
-A = TypeVar('A')
+A = TypeVar('A', bound=Action)
 
 
-class Problem(ABC, Generic[S, A]):
+class Game(ABC, Generic[S, A]):
     def __init__(self, initial_state: S):
         self.initial_state = initial_state
 
@@ -21,17 +22,17 @@ class Problem(ABC, Generic[S, A]):
         raise NotImplementedError
 
     @abstractmethod
-    def value_for(self, state: S) -> float:
-        """Returns values of a state"""
+    def value_for_terminal(self, state: S) -> float:
+        """Returns values of a terminal state"""
         raise NotImplementedError
 
     @abstractmethod
     def is_terminal_state(self, state: S) -> bool:
-        """Returns is given state is a terminal state"""
+        """Returns if given state is a terminal state"""
         raise NotImplementedError
 
     @abstractmethod
     def switch_players(self):
-        """Returns problem with switched players"""
+        """Returns game with switched players"""
         raise NotImplementedError
 
