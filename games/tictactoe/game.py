@@ -1,11 +1,11 @@
-from base.problem import Problem
-from problems.tictactoe.state import TicTacToeState
-from problems.tictactoe.action import TicTacToeAction
-from typing import List, Union
+from base.game import Game
+from games.tictactoe.state import TicTacToeState
+from games.tictactoe.action import TicTacToeAction
+from typing import List, Optional
 import numpy as np
 
 
-class TicTacToeProblem(Problem[TicTacToeState, TicTacToeAction]):
+class TicTacToeGame(Game[TicTacToeState, TicTacToeAction]):
     def __init__(self, player_sign='X', opponent_sign='O'):
         self.player_sign = player_sign
         self.opponent_sign = opponent_sign
@@ -15,10 +15,10 @@ class TicTacToeProblem(Problem[TicTacToeState, TicTacToeAction]):
     def initial_game_state(self):
         return TicTacToeState(board=np.full((3, 3), ' '))
 
-    def switch_players(self) -> 'TicTacToeProblem':
-        return TicTacToeProblem(player_sign=self.opponent_sign, opponent_sign=self.player_sign)
+    def switch_players(self) -> 'TicTacToeGame':
+        return TicTacToeGame(player_sign=self.opponent_sign, opponent_sign=self.player_sign)
 
-    def _get_sign(self, is_opponent: bool):
+    def _get_sign(self, is_opponent: bool) -> str:
         if is_opponent:
             return self.opponent_sign
         else:
@@ -32,7 +32,7 @@ class TicTacToeProblem(Problem[TicTacToeState, TicTacToeAction]):
     def take_action(self, state: TicTacToeState, action: TicTacToeAction) -> TicTacToeState:
         return action.apply(state)
 
-    def _find_winner(self, state: TicTacToeState) -> Union[str, None]:
+    def _find_winner(self, state: TicTacToeState) -> Optional[str]:
         for row in range(3):
             if (state.board[row, :] == state.board[row, 0]).all() and state.board[row, 0] != ' ':
                 return state.board[row, 0]
@@ -44,7 +44,7 @@ class TicTacToeProblem(Problem[TicTacToeState, TicTacToeAction]):
                 return state.board[1, 1]
         return None
 
-    def value_for(self, state: TicTacToeState) -> float:
+    def value_for_terminal(self, state: TicTacToeState) -> float:
         winner = self._find_winner(state)
         if winner == self.player_sign:
             return 1
@@ -52,10 +52,8 @@ class TicTacToeProblem(Problem[TicTacToeState, TicTacToeAction]):
             return -1
         return 0
 
-    def is_terminal_state(self, state: TicTacToeState, state_value: float) -> bool:
-        if state_value in [-1, 1] or ' ' not in state.board:
-            return True
-        return False
+    def is_terminal_state(self, state: TicTacToeState) -> bool:
+        return self.value_for_terminal(state) in [-1, 1] or ' ' not in state.board
 
 
 

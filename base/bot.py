@@ -1,15 +1,16 @@
-from base.problem import Problem
+from base.game import Game
 from base.state import State
+from base.action import Action
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar, Union
+from typing import Generic, TypeVar, Optional
 
-P = TypeVar('P', bound=Problem)
+G = TypeVar('G', bound=Game)
 
 
-class Bot(ABC, Generic[P]):
-    def __init__(self, problem: Union[P, None]):
-        self.problem = problem
+class Bot(ABC, Generic[G]):
+    def __init__(self, game: G):
+        self.game = game
 
     @abstractmethod
-    def solve(self, state: State) -> State:
+    def choose_action(self, state: State) -> Optional[Action]:
         raise NotImplementedError

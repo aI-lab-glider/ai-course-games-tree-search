@@ -1,4 +1,4 @@
-from problems.tictactoe.state import TicTacToeState
+from games.tictactoe.state import TicTacToeState
 from copy import deepcopy
 from dataclasses import dataclass
 

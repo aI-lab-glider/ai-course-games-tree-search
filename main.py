@@ -1,10 +1,11 @@
-from problems.tictactoe.problem import TicTacToeProblem
+from games.tictactoe.game import TicTacToeGame
 from algorithms.minimax import Minimax
-from game import Game
+from match import Match
 
 
 if __name__ == "__main__":
-    problem = TicTacToeProblem()
-    game = Game(problem, player_a=Minimax(), player_b=Minimax())
-    game.play()
-
+    game = TicTacToeGame()
+    player_a = Minimax(game)
+    player_b = Minimax(game.switch_players())
+    match = Match(game, player_a, player_b)
+    match.play()
