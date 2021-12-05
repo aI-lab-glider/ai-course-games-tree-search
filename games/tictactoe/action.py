@@ -13,3 +13,6 @@ class TicTacToeAction:
         new_board = deepcopy(state.board)
         new_board[self.row, self.col] = self.sign
         return TicTacToeState(board=new_board)
+
+    def __hash__(self):
+        return hash((self.sign, self.row, self.col))
