@@ -1,5 +1,7 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class Action(ABC):
-    pass
+    @abstractmethod
+    def __hash__(self):
+        pass
