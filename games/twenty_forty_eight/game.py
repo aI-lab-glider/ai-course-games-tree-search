@@ -4,6 +4,7 @@ from games.twenty_forty_eight.action import TwentyFortyEightPlayerAction, Twenty
 from base.game import Game
 import numpy as np
 import random
+from itertools import product
 
 
 class TwentyFortyEightGame(Game):
@@ -36,32 +37,26 @@ class TwentyFortyEightGame(Game):
         return any(state.board[row][col] == state.board[row + 1][col] and state.board[row][col] != 0
                    for row in range(self.board_dim-1) for col in range(self.board_dim))
 
-    def _is_able_to_move_left(self, state: TwentyFortyEightState) -> bool:
-        return any(state.board[row, col] == 0 and state.board[row, col+1] != 0
-                   for col in range(self.board_dim-1) for row in range(self.board_dim))
-
-    def _is_able_to_move_right(self, state: TwentyFortyEightState) -> bool:
-        return any(state.board[row, col] != 0 and state.board[row, col+1] == 0
-                   for col in range(self.board_dim-1) for row in range(self.board_dim))
-
-    def _is_able_to_move_up(self, state: TwentyFortyEightState) -> bool:
-        return any(state.board[row, col] == 0 and state.board[row+1, col] != 0
-                   for row in range(self.board_dim-1) for col in range(self.board_dim))
-
-    def _is_able_to_move_down(self, state: TwentyFortyEightState) -> bool:
-        return any(state.board[row, col] != 0 and state.board[row+1, col] == 0
-                   for row in range(self.board_dim-1) for col in range(self.board_dim))
+    def _is_able_to_move_in_direction(self, direction: Direction, state: TwentyFortyEightState) -> bool:
+        row_offset, col_offset, search_space = {
+            Direction.LEFT: (0, -1, product(range(self.board_dim), range(1, self.board_dim))),
+            Direction.RIGHT: (0, 1, product(range(self.board_dim), range(self.board_dim-1))),
+            Direction.UP: (-1, 0, product(range(1, self.board_dim), range(self.board_dim))),
+            Direction.DOWN: (1, 0, product(range(self.board_dim-1), range(self.board_dim)))
+        }[direction]
+        return any(state.board[row, col] != 0 and state.board[row + row_offset, col + col_offset] == 0 for row, col in
+                   search_space)
 
     def _is_valid_move(self, direction: Direction, state: TwentyFortyEightState) -> bool:
-        validate_move = {
-            Direction.LEFT: (self._is_able_to_merge_row, self._is_able_to_move_left),
-            Direction.RIGHT: (self._is_able_to_merge_row, self._is_able_to_move_right),
-            Direction.UP: (self._is_able_to_merge_col, self._is_able_to_move_up),
-            Direction.DOWN: (self._is_able_to_merge_col, self._is_able_to_move_down)
-        }
-        if validate_move[direction][0](state):
+        is_able_to_merge = {
+            Direction.LEFT: self._is_able_to_merge_row,
+            Direction.RIGHT: self._is_able_to_merge_row,
+            Direction.UP: self._is_able_to_merge_col,
+            Direction.DOWN: self._is_able_to_merge_col
+        }[direction]
+        if is_able_to_merge(state):
             return True
-        return validate_move[direction][1](state)
+        return self._is_able_to_move_in_direction(direction, state)
 
     def take_action(self, state: TwentyFortyEightState,
                     action: Union[TwentyFortyEightPlayerAction, TwentyFortyEightOpponentAction]) -> TwentyFortyEightState:
