@@ -46,15 +46,15 @@ class TwentyFortyEightPlayerAction(Action):
         return new_board
 
     def _compress(self, board: NDArray) -> NDArray:
-        compressed_board = np.full((4, 4), 0)
-        for row in range(4):
-            compressed_row = np.array([block_value for block_value in board[row] if block_value != 0])
+        compressed_board = np.zeros(board.shape, dtype=int)
+        for row in range(board.shape[0]):
+            compressed_row = board[row][board[row] != 0]
             compressed_board[row, 0:compressed_row.size] = compressed_row
         return compressed_board
 
     def _merge(self, board: NDArray) -> NDArray:
-        for row in range(4):
-            for col in range(3):
+        for row in range(board.shape[0]):
+            for col in range(board.shape[0]-1):
                 if board[row][col] == board[row][col + 1] and board[row][col] != 0:
                     board[row][col] *= 2
                     board[row][col + 1] = 0

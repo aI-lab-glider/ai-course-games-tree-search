@@ -7,12 +7,13 @@ import random
 
 
 class TwentyFortyEightGame(Game):
-    def __init__(self):
+    def __init__(self, board_dim=4):
+        self.board_dim = board_dim
         initial_state = self.initial_game_state()
         super().__init__(initial_state)
 
     def initial_game_state(self) -> TwentyFortyEightState:
-        state = TwentyFortyEightState(board=np.full((4, 4), 0))
+        state = TwentyFortyEightState(board=np.zeros((self.board_dim, self.board_dim), dtype=int))
         for _ in range(2):
             action = random.choice(self.actions_for(state, is_opponent=True))
             state = self.take_action(state, action)
@@ -22,30 +23,34 @@ class TwentyFortyEightGame(Game):
             Union[TwentyFortyEightPlayerAction, TwentyFortyEightOpponentAction]]:
         if is_opponent:
             return [TwentyFortyEightOpponentAction(row, col, block_value=random.choices([2, 4], weights=[0.9, 0.1])[0])
-                    for row in range(4) for col in range(4)
+                    for row in range(self.board_dim) for col in range(self.board_dim)
                     if from_state.board[row, col] == 0]
         else:
             return [TwentyFortyEightPlayerAction(direction) for direction in Direction if self._is_valid_move(direction, from_state)]
 
     def _is_able_to_merge_row(self, state: TwentyFortyEightState) -> bool:
         return any(state.board[row][col] == state.board[row][col + 1] and state.board[row][col] != 0
-                   for col in range(3) for row in range(4))
+                   for col in range(self.board_dim-1) for row in range(self.board_dim))
 
     def _is_able_to_merge_col(self, state: TwentyFortyEightState) -> bool:
         return any(state.board[row][col] == state.board[row + 1][col] and state.board[row][col] != 0
-                   for row in range(3) for col in range(4))
+                   for row in range(self.board_dim-1) for col in range(self.board_dim))
 
     def _is_able_to_move_left(self, state: TwentyFortyEightState) -> bool:
-        return any(state.board[row, col] == 0 and state.board[row, col+1] != 0 for col in range(3) for row in range(4))
+        return any(state.board[row, col] == 0 and state.board[row, col+1] != 0
+                   for col in range(self.board_dim-1) for row in range(self.board_dim))
 
     def _is_able_to_move_right(self, state: TwentyFortyEightState) -> bool:
-        return any(state.board[row, col] != 0 and state.board[row, col+1] == 0 for col in range(3) for row in range(4))
+        return any(state.board[row, col] != 0 and state.board[row, col+1] == 0
+                   for col in range(self.board_dim-1) for row in range(self.board_dim))
 
     def _is_able_to_move_up(self, state: TwentyFortyEightState) -> bool:
-        return any(state.board[row, col] == 0 and state.board[row+1, col] != 0 for row in range(3) for col in range(4))
+        return any(state.board[row, col] == 0 and state.board[row+1, col] != 0
+                   for row in range(self.board_dim-1) for col in range(self.board_dim))
 
     def _is_able_to_move_down(self, state: TwentyFortyEightState) -> bool:
-        return any(state.board[row, col] != 0 and state.board[row+1, col] == 0 for row in range(3) for col in range(4))
+        return any(state.board[row, col] != 0 and state.board[row+1, col] == 0
+                   for row in range(self.board_dim-1) for col in range(self.board_dim))
 
     def _is_valid_move(self, direction: Direction, state: TwentyFortyEightState) -> bool:
         validate_move = {
@@ -62,7 +67,7 @@ class TwentyFortyEightGame(Game):
                     action: Union[TwentyFortyEightPlayerAction, TwentyFortyEightOpponentAction]) -> TwentyFortyEightState:
         return action.apply(state)
 
-    def value_for_terminal(self, state: TwentyFortyEightState) -> float:
+    def value_for_terminal(self, state: TwentyFortyEightState) -> int:
         if 2048 in state.board:
             return 1
         return -1
