@@ -21,9 +21,14 @@ class Game(ABC, Generic[S, A]):
         """Returns new state resulting from taking given action"""
         raise NotImplementedError
 
+    def reward(self, state: S) -> float:
+        """Returns reward for a terminal state. Raises exception if state is not terminal"""
+        assert self.is_terminal_state(state), "This method should be called only on the terminal states!"
+        return self._value_for_terminal(state)
+
     @abstractmethod
-    def value_for_terminal(self, state: S) -> float:
-        """Returns values of a terminal state"""
+    def _value_for_terminal(self, state: S) -> float:
+        """Returns value of a terminal state"""
         raise NotImplementedError
 
     @abstractmethod

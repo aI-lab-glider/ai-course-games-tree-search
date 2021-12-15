@@ -62,7 +62,7 @@ class TwentyFortyEightGame(Game):
                     action: Union[TwentyFortyEightPlayerAction, TwentyFortyEightOpponentAction]) -> TwentyFortyEightState:
         return action.apply(state)
 
-    def value_for_terminal(self, state: TwentyFortyEightState) -> int:
+    def _value_for_terminal(self, state: TwentyFortyEightState) -> int:
         if 2048 in state.board:
             return 1
         return -1

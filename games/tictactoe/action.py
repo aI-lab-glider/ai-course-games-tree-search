@@ -1,10 +1,11 @@
 from games.tictactoe.state import TicTacToeState
 from copy import deepcopy
 from dataclasses import dataclass
+from base.action import Action
 
 
 @dataclass
-class TicTacToeAction:
+class TicTacToeAction(Action):
     sign: str
     row: int
     col: int
