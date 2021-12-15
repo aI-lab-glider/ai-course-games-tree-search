@@ -12,7 +12,7 @@ class TicTacToeGame(Game[TicTacToeState, TicTacToeAction]):
         initial_state = self.initial_game_state()
         super().__init__(initial_state)
 
-    def initial_game_state(self):
+    def initial_game_state(self) -> TicTacToeState:
         return TicTacToeState(board=np.full((3, 3), ' '))
 
     def switch_players(self) -> 'TicTacToeGame':
@@ -44,7 +44,7 @@ class TicTacToeGame(Game[TicTacToeState, TicTacToeAction]):
                 return state.board[1, 1]
         return None
 
-    def value_for_terminal(self, state: TicTacToeState) -> float:
+    def _value_for_terminal(self, state: TicTacToeState) -> float:
         winner = self._find_winner(state)
         if winner == self.player_sign:
             return 1
@@ -53,7 +53,4 @@ class TicTacToeGame(Game[TicTacToeState, TicTacToeAction]):
         return 0
 
     def is_terminal_state(self, state: TicTacToeState) -> bool:
-        return self.value_for_terminal(state) in [-1, 1] or ' ' not in state.board
-
-
-
+        return ' ' not in state.board or self._value_for_terminal(state) in [-1, 1]

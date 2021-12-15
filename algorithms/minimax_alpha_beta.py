@@ -12,9 +12,8 @@ class MinimaxAlphaBeta(Bot):
         return self._minimax(state, -math.inf, math.inf, is_opponent=False)[0]
 
     def _minimax(self, state: State, alpha: float, beta: float, is_opponent: bool) -> Tuple[Optional[Action], float]:
-        state_value = self.game.value_for_terminal(state)
         if self.game.is_terminal_state(state):
-            return None, state_value
+            return None, self.game.reward(state)
         return self._make_move(state, alpha, beta, is_opponent)
 
     def _make_move(self, from_state: State, alpha: float, beta: float, is_opponent: bool) -> Tuple[Optional[Action], float]:

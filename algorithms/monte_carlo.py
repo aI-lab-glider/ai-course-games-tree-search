@@ -19,7 +19,7 @@ class MonteCarlo(Bot):
         for _ in range(self.n_rollouts):
             action = random.choice(self.game.actions_for(from_state, is_opponent=False))
             result_state = self._rollout(self.game.take_action(from_state, action))
-            action_value = self.game.value_for_terminal(result_state)
+            action_value = self.game.reward(result_state)
             if action in action_values:
                 action_values[action] += action_value
             else:
