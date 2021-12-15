@@ -23,7 +23,7 @@ class NearSighted(Bot):
         # every action leads to the defeat
         return choice(self.game.actions_for(state, is_opponent=self.is_opponent))
 
-    def is_action_reasonable(self, curr_state: State, look_forward: int, is_opponent: bool):
+    def is_action_reasonable(self, curr_state: State, look_forward: int, is_opponent: bool) -> bool:
         if look_forward == 0:
             return not (self.game.is_terminal_state(curr_state) and self.game.value_for_terminal(curr_state) < 0)
         return all(self.is_action_reasonable(self.game.take_action(curr_state, action), look_forward - 1, is_opponent=not is_opponent)
