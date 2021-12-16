@@ -13,3 +13,4 @@ if __name__ == "__main__":
     player_b = RandomPlayer(game, is_opponent=True)
     match = Match(game, player_a, player_b)
     match.play()
+    match.to_gif()

@@ -1,7 +1,8 @@
 from base.state import State
 from base.action import Action
-from typing import List, TypeVar, Generic
+from typing import List, TypeVar, Generic, Optional, Tuple
 from abc import ABC, abstractmethod
+from PIL.Image import Image
 
 S = TypeVar('S', bound=State)
 A = TypeVar('A', bound=Action)
@@ -41,3 +42,5 @@ class Game(ABC, Generic[S, A]):
         """Returns game with switched players"""
         raise NotImplementedError
 
+    def to_image(self, state: S, size: Tuple[int, int] = (800, 800)) -> Optional[Image]:
+        """Converts state to its image representation."""
