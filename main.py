@@ -9,11 +9,11 @@ from games.checkers.game import CheckersGame
 
 
 if __name__ == "__main__":
-    game = TwentyFortyEightGame()
-    player_a = MonteCarlo(game, n_rollouts=20)
-    player_b = RandomPlayer(game, is_opponent=True)
-    match = Match(game, player_a, player_b)
-    match.play()
+    # game = TwentyFortyEightGame()
+    # player_a = MonteCarlo(game, n_rollouts=20)
+    # player_b = RandomPlayer(game, is_opponent=True)
+    # match = Match(game, player_a, player_b)
+    # match.play()
     # game = TicTacToeGame()
     # player_a = Minimax(game)
     # player_b = Minimax(game.switch_players())
@@ -21,5 +21,6 @@ if __name__ == "__main__":
     # match.play()
     game = CheckersGame((12,12))
     game.initial_state.show()
+    print(len(game.actions_for(game.initial_state, True)))
 
 
