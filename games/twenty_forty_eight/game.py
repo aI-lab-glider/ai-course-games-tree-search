@@ -86,18 +86,15 @@ class TwentyFortyEightGame(Game):
         def font(block):
             return ImageFont.truetype("utils/arial.ttf", size=int(grid_drawer.cell_height * (7-len(str(block)))/10))
 
-        def block_color(block):
-            return {2: (252, 191, 73), 4: (247, 127, 0), 8: (214, 40, 40), 16: (226, 109, 92), 32: (165, 1, 4),
-                    64: (216, 87, 42), 128: (179, 106, 94), 256: (163, 50, 11), 512: (107, 5, 4), 1024: (245, 105, 96),
-                    2048: (156, 246, 246)}[block]
+        block_color = {
+            2: (252, 191, 73), 4: (247, 127, 0), 8: (214, 40, 40), 16: (226, 109, 92), 32: (165, 1, 4),
+            64: (216, 87, 42), 128: (179, 106, 94), 256: (163, 50, 11), 512: (107, 5, 4), 1024: (245, 105, 96),
+            2048: (156, 246, 246)}
 
         for y, row in enumerate(state.board):
             for x, cell in enumerate(row):
                 if cell != 0:
-                    grid_drawer.draw_rectangle((x, y), block_color(cell))
-                    x_start, y_start, _, _ = grid_drawer.get_cell_coords(-grid_drawer.border, x, y)
-                    grid_drawer.draw.text((
-                        x_start + (grid_drawer.cell_width // 2),
-                        y_start + (grid_drawer.cell_height // 2)
-                    ), str(cell), fill='black', font=font(cell), anchor='mm')
+                    grid_drawer.draw_rectangle((x, y), block_color[cell])
+                    grid_drawer.draw_text(str(cell), (x, y), fill=(51, 44, 35), font=font(cell))
+
         return image

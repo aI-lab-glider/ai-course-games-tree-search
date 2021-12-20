@@ -20,6 +20,7 @@ class Match:
             if not self._is_match_end():
                 self.current_state = self._next_move(self.player_b)
                 self.states.append(self.current_state)
+        self.states.append(self.current_state)
 
     def _next_move(self, player: Bot) -> State:
         return self.game.take_action(self.current_state, player.choose_action(self.current_state))

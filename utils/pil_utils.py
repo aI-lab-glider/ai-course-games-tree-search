@@ -1,5 +1,5 @@
 from typing import Optional, Tuple
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 
 class GridDrawer:
@@ -35,6 +35,13 @@ class GridDrawer:
     def draw_rectangle(self, grid_coords: Tuple[int, ...], fill: Optional[Tuple[int, int, int]] = None, padding=0):
         coords = self.get_cell_coords(padding, *grid_coords)
         self.draw.rectangle(coords, fill)
+
+    def draw_text(self, text: str, grid_coords: Tuple[int, ...], fill: Tuple[int, int, int], font: ImageFont):
+        x_start, y_start, _, _ = self.get_cell_coords(-self.border, *grid_coords)
+        self.draw.text((
+            x_start + (self.cell_width // 2),
+            y_start + (self.cell_height // 2)
+        ), text, fill=fill, font=font, anchor='mm')
 
     def draw_circle(self, grid_x: int, grid_y: int, fill: Optional[Tuple[int, int, int]] = None):
         coords = self.get_cell_coords(0, grid_x, grid_y)

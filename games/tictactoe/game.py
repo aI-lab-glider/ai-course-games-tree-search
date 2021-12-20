@@ -1,7 +1,9 @@
 from base.game import Game
 from games.tictactoe.state import TicTacToeState
 from games.tictactoe.action import TicTacToeAction
-from typing import List, Optional
+from utils.pil_utils import GridDrawer
+from PIL import Image, ImageFont
+from typing import List, Optional, Tuple
 import numpy as np
 
 
@@ -54,3 +56,17 @@ class TicTacToeGame(Game[TicTacToeState, TicTacToeAction]):
 
     def is_terminal_state(self, state: TicTacToeState) -> bool:
         return ' ' not in state.board or self._value_for_terminal(state) in [-1, 1]
+
+    def to_image(self, state: TicTacToeState, size: Tuple[int, int] = (800, 800)) -> Image.Image:
+        background_color = (255, 233, 208)
+        image = Image.new("RGB", size, background_color)
+        grid_drawer = GridDrawer(image, state)
+        grid_drawer.draw_grid()
+        font = ImageFont.truetype("utils/arial.ttf", size=int(grid_drawer.cell_height * 0.8))
+        colors = {'X': (229, 68, 109), 'O': (46, 134, 171)}
+
+        for y, row in enumerate(state.board):
+            for x, cell in enumerate(row):
+                if cell != ' ':
+                    grid_drawer.draw_text(cell, (x, y), fill=colors[cell], font=font)
+        return image
