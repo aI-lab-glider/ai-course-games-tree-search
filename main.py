@@ -19,8 +19,11 @@ if __name__ == "__main__":
     # player_b = Minimax(game.switch_players())
     # match = Match(game, player_a, player_b)
     # match.play()
-    game = CheckersGame((12,12))
-    game.initial_state.show()
-    print(len(game.actions_for(game.initial_state, True)))
+    game = CheckersGame()
+    player_a = Minimax(game)
+    player_b = Minimax(game.switch_players())
+    match = Match(game, player_a, player_b)
+    match.play()
+    # game.initial_state.show()
 
 
