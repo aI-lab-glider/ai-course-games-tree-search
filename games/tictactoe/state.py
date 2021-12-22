@@ -8,4 +8,9 @@ class TicTacToeState(State):
     board: NDArray
 
     def show(self):
-        print(self.board)
+        for row in self.board:
+            for col in row:
+                sign = col if col != ' ' else '_'
+                print(sign, end='  ')
+            print()
+        print()
