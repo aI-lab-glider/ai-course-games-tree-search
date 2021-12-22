@@ -84,7 +84,7 @@ class TwentyFortyEightGame(Game):
         grid_drawer.draw_grid()
 
         def font(block):
-            return ImageFont.truetype("utils/arial.ttf", size=int(grid_drawer.cell_height * (7-len(str(block)))/10))
+            return ImageFont.truetype("assets/arial.ttf", size=int(grid_drawer.cell_height * (7-len(str(block)))/10))
 
         block_color = {
             2: (252, 191, 73), 4: (247, 127, 0), 8: (214, 40, 40), 16: (226, 109, 92), 32: (165, 1, 4),

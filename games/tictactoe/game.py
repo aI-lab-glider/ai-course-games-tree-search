@@ -62,7 +62,7 @@ class TicTacToeGame(Game[TicTacToeState, TicTacToeAction]):
         image = Image.new("RGB", size, background_color)
         grid_drawer = GridDrawer(image, state)
         grid_drawer.draw_grid()
-        font = ImageFont.truetype("utils/arial.ttf", size=int(grid_drawer.cell_height * 0.8))
+        font = ImageFont.truetype("assets/arial.ttf", size=int(grid_drawer.cell_height * 0.8))
         colors = {'X': (229, 68, 109), 'O': (46, 134, 171)}
 
         for y, row in enumerate(state.board):
