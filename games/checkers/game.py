@@ -3,7 +3,7 @@ from games.checkers.state import CheckersState
 from games.checkers.piece import CheckersPiece, Figure
 from games.checkers.action import CheckersAction, Move
 import numpy as np
-from typing import Tuple
+from typing import Tuple, List
 
 
 class CheckersGame(Game[CheckersState, CheckersAction]):
@@ -11,6 +11,7 @@ class CheckersGame(Game[CheckersState, CheckersAction]):
         self.board_shape = board_shape
         self.pieces = [] 
         initial_state = self.initial_game_state()
+        self.no_actions = False
         super().__init__(initial_state)
 
 
@@ -27,33 +28,50 @@ class CheckersGame(Game[CheckersState, CheckersAction]):
                         piece = CheckersPiece(Figure.BLACK_PIECE, row, col)
                         board[row][col] = piece.id.value
                         self.pieces.append(piece)
-        state = CheckersState(board)
-        return state
+        return CheckersState(board)
 
 
-    def actions_for(self, state, is_opponent: bool) -> CheckersAction:
-        moves = {
-            Figure.WHITE_PIECE: [Move.WHITE_LEFT, Move.WHITE_RIGHT],
-            Figure.BLACK_PIECE: [Move.BLACK_LEFT, Move.BLACK_RIGHT]
-        }
-        actions = [CheckersAction(move, piece)
-                    for piece in self.pieces
-                    for move in moves[piece.id]
-                    if self.is_valid_move(state, piece, move)]
-        return actions
+    def actions_for(self, state: CheckersState, is_opponent: bool) -> List[CheckersAction]:
+        actions = []
+        for piece in self.pieces:
+            if piece.turn != is_opponent:
+                for move in Move:
+                    if self.is_valid_move(state, piece, move):
+                        actions.append(CheckersAction(move, piece, self.pieces, False))
+                    is_valid, moves = self.is_valid_jump(state, piece, move, [])
+                    if is_valid:
+                        actions.append(CheckersAction(moves, piece, self.pieces, True))
+        if len(actions) == 0:
+            self.no_actions = True
+        return actions           
 
 
     def is_valid_move(self, state: CheckersState, piece: CheckersPiece, move: Move) -> bool:
-        new_row = piece.row + move.value[0]
-        new_col = piece.col + move.value[1]
-        if self.on_board(new_row, new_col):
-            if state.board[new_row, new_col] == ' ':
-                return True
+        piece_moves = {
+            Figure.WHITE_PIECE: [Move.WHITE_LEFT, Move.WHITE_RIGHT],
+            Figure.BLACK_PIECE: [Move.BLACK_LEFT, Move.BLACK_RIGHT]
+        }
+        if move in piece_moves[piece.id]:
+            new_row = piece.row + move.value[0]
+            new_col = piece.col + move.value[1]
+            if self.on_board(new_row, new_col):
+                if state.board[new_row, new_col] == ' ':
+                    return True
         return False
 
 
-    def is_valid_jump(self):
-        pass
+    def is_valid_jump(self, state: CheckersState, piece: CheckersPiece, move: Move, moves: List = []) -> bool:    
+        new_row = piece.row + move.value[0] * 2
+        new_col = piece.col + move.value[1] * 2
+        if self.on_board(new_row, new_col):  
+            if state.board[piece.row + move.value[0], piece.col + move.value[1]] not in [piece.id.value, piece.id.value.capitalize(), ' ']:
+                if state.board[new_row, new_col] == ' ':
+                    moves.append(move)
+                    for next_move in Move:
+                        if (next_move.value[0], next_move.value[1]) != (-move.value[0], -move.value[1]):
+                            self.is_valid_jump(state, CheckersPiece(piece.id, new_row, new_col), next_move, moves)
+                    return True, moves
+        return False, moves
 
 
     def on_board(self, row: int, col: int) -> bool:
@@ -66,14 +84,26 @@ class CheckersGame(Game[CheckersState, CheckersAction]):
         return CheckersGame(self.board_shape)
 
 
-    def take_action(self, state, action):
-        """Returns new state resulting from taking given action"""
-        raise NotImplementedError
+    def take_action(self, state: CheckersState, action: CheckersAction) -> CheckersState:
+        new_state = action.apply(state)
+        print(new_state.show())
+        return new_state
 
-    def _value_for_terminal(self, state) -> float:
-        """Returns values of a terminal state"""
-        raise NotImplementedError
 
-    def is_terminal_state(self, state) -> bool:
-        """Returns if given state is a terminal state"""
-        raise NotImplementedError
+    def reward(self, state: CheckersState) -> float:
+        assert self.is_terminal_state(state)
+        return self._value_for_terminal(state)
+
+
+    def _value_for_terminal(self, state: CheckersState) -> float:
+        #unique, counts = np.unique(state.board, return_counts=True)
+        if 'b' not in state.board:
+            return 1
+        if 'w' not in state.board:
+            return -1
+        return 0
+
+
+    def is_terminal_state(self, state: CheckersState) -> bool:
+        return self.no_actions or self._value_for_terminal(state) in [-1, 1]
+
