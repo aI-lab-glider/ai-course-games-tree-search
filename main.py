@@ -8,7 +8,10 @@ from match import Match
 
 
 if __name__ == "__main__":
-    game = TwentyFortyEightGame()
+    game = TicTacToeGame()
+    # TODO: player selection doesnt work
+    # player_a = Minimax(game) 
+    # player_b = MinimaxAlphaBeta(game)
     player_a = MonteCarlo(game, n_rollouts=20)
     player_b = RandomPlayer(game, is_opponent=True)
     match = Match(game, player_a, player_b)

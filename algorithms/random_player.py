@@ -1,5 +1,6 @@
 from random import choice
 from typing import Optional
+# from time impoer sleep
 
 from base.action import Action
 from base.bot import Bot, G
@@ -12,4 +13,5 @@ class RandomPlayer(Bot):
         super().__init__(game)
 
     def choose_action(self, state: State) -> Optional[Action]:
-        return choice(self.game.actions_for(state, self.is_opponent))
+        self.best_action = choice(self.game.actions_for(state, self.is_opponent))
+        return self.best_action
