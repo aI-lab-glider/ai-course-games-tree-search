@@ -24,7 +24,7 @@ class MonteCarlo(Bot):
                 action_values[action] += action_value
             else:
                 action_values[action] = action_value
-        self.best_action = max(action_values, key=action_values.get)
+            self.best_action = max(action_values, key=action_values.get)
         return action_values
 
     def _rollout(self, from_state: State) -> State:

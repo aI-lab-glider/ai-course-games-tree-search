@@ -9,10 +9,7 @@ from match import Match
 
 if __name__ == "__main__":
     game = TicTacToeGame()
-    # TODO: player selection doesnt work
-    # player_a = Minimax(game) 
-    # player_b = MinimaxAlphaBeta(game)
-    player_a = MonteCarlo(game, n_rollouts=20)
-    player_b = RandomPlayer(game, is_opponent=True)
+    player_a = RandomPlayer(game) 
+    player_b = MonteCarlo(game.switch_players(), 100)
     match = Match(game, player_a, player_b)
     match.play()

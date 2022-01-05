@@ -15,10 +15,10 @@ class Match:
 
 
     def play(self):
-        self.turn = 1
+        self.turn = 0
         players = {0: self.player_a, 1: self.player_b}
         while not self._is_match_end():
-            print(f"Player {int(self.turn)} turn")
+            print(f"Player {int(self.turn)} turn. ({type(players[int(self.turn)]).__name__})")
             self.current_state = self._next_move(players[int(self.turn)])
             self.current_state.show()
             self.turn = not self.turn
