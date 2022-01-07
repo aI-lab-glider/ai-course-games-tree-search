@@ -8,9 +8,9 @@ from match import Match
 
 
 if __name__ == "__main__":
-    game = TwentyFortyEightGame()
-    player_a = MonteCarlo(game, n_rollouts=20)
-    player_b = RandomPlayer(game, is_opponent=True)
+    game = TicTacToeGame()
+    player_a = RandomPlayer(game) 
+    player_b = MonteCarlo(game.switch_players(), 100)
     match = Match(game, player_a, player_b)
     match.play()
     match.to_gif()

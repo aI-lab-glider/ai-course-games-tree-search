@@ -12,4 +12,6 @@ class RandomPlayer(Bot):
         super().__init__(game)
 
     def choose_action(self, state: State) -> Optional[Action]:
-        return choice(self.game.actions_for(state, self.is_opponent))
+        self.best_action = choice(
+            self.game.actions_for(state, self.is_opponent))
+        return self.best_action

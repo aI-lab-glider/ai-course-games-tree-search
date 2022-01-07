@@ -13,4 +13,9 @@ class TicTacToeState(State):
         return cast(Tuple[int, int], self.board.shape)
 
     def show(self):
-        print(self.board)
+        for row in self.board:
+            for col in row:
+                sign = col if col != ' ' else '_'
+                print(sign, end='  ')
+            print()
+        print()
