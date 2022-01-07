@@ -13,3 +13,4 @@ if __name__ == "__main__":
     player_b = MonteCarlo(game.switch_players(), 100)
     match = Match(game, player_a, player_b)
     match.play()
+    match.to_gif()

@@ -1,7 +1,9 @@
-from typing import List, Union
+from typing import List, Union, Tuple
 from games.twenty_forty_eight.state import TwentyFortyEightState
 from games.twenty_forty_eight.action import TwentyFortyEightPlayerAction, TwentyFortyEightOpponentAction, Direction
 from base.game import Game
+from PIL import Image, ImageFont
+from utils.pil_utils import GridDrawer
 import numpy as np
 import random
 from itertools import product
@@ -74,3 +76,25 @@ class TwentyFortyEightGame(Game):
 
     def switch_players(self):
         pass
+
+    def to_image(self, state: TwentyFortyEightState, size: Tuple[int, int] = (800, 800)) -> Image.Image:
+        background_color = (255, 233, 208)
+        image = Image.new("RGB", size, background_color)
+        grid_drawer = GridDrawer(image, state)
+        grid_drawer.draw_grid()
+
+        def font(block):
+            return ImageFont.truetype("assets/arial.ttf", size=int(grid_drawer.cell_height * (7-len(str(block)))/10))
+
+        block_color = {
+            2: (252, 191, 73), 4: (247, 127, 0), 8: (214, 40, 40), 16: (226, 109, 92), 32: (165, 1, 4),
+            64: (216, 87, 42), 128: (179, 106, 94), 256: (163, 50, 11), 512: (107, 5, 4), 1024: (245, 105, 96),
+            2048: (156, 246, 246)}
+
+        for y, row in enumerate(state.board):
+            for x, cell in enumerate(row):
+                if cell != 0:
+                    grid_drawer.draw_rectangle((x, y), block_color[cell])
+                    grid_drawer.draw_text(str(cell), (x, y), fill=(51, 44, 35), font=font(cell))
+
+        return image

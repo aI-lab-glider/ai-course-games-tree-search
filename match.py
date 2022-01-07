@@ -12,6 +12,7 @@ class Match:
         self.player_a = player_a
         self.player_b = player_b
         self.timeout = timeout
+        self.states = [self.current_state]
 
 
     def play(self):
@@ -22,6 +23,8 @@ class Match:
             self.current_state = self._next_move(players[int(self.turn)])
             self.current_state.show()
             self.turn = not self.turn
+            self.states.append(self.current_state)
+        self.states.append(self.current_state)
 
 
     def _next_move(self, player: Bot) -> State:
@@ -35,3 +38,8 @@ class Match:
 
     def _is_match_end(self) -> bool:
         return self.game.is_terminal_state(self.current_state)
+
+    def to_gif(self):
+        img_name = f"{self.game.__class__.__name__}_{self.player_a.__class__.__name__}_{self.player_b.__class__.__name__}.gif"
+        imgs = [self.game.to_image(state) for state in self.states]
+        imgs[0].save(img_name, save_all=True, append_images=imgs[1:], format='GIF', optimize=False, duration=500, loop=1)
