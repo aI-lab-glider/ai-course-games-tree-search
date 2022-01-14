@@ -10,8 +10,8 @@ from itertools import product
 
 
 class TwentyFortyEightGame(Game):
-    def __init__(self, board_dim=4):
-        self.board_dim = board_dim
+    def __init__(self):
+        self.board_dim = 4
         initial_state = self.initial_game_state()
         super().__init__(initial_state)
 
