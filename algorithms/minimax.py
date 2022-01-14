@@ -8,8 +8,8 @@ from typing import Tuple, Optional
 
 
 class Minimax(Bot):
-    def choose_action(self, state: State) -> Optional[Action]:
-        return self._minimax(state, is_opponent=False)[0]
+    def choose_action(self, state: State) -> None:
+        self.best_action = self._minimax(state, is_opponent=False)[0]
 
     def _minimax(self, state: State, is_opponent: bool) -> Tuple[Optional[Action], float]:
         if self.game.is_terminal_state(state):

@@ -10,9 +10,9 @@ class MonteCarlo(Bot):
         self.n_rollouts = n_rollouts
         super().__init__(game)
 
-    def choose_action(self, from_state: State) -> Optional[Action]:
+    def choose_action(self, from_state: State) -> None:
         action_values = self._evaluate_actions(from_state)
-        return max(action_values, key=action_values.get)
+        self.best_action = max(action_values, key=action_values.get)
 
     def _evaluate_actions(self, from_state: State) -> Dict[Action, float]:
         action_values = {}

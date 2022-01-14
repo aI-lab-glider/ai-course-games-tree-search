@@ -11,17 +11,18 @@ class NearSighted(Bot):
         self.is_opponent = is_opponent
         super().__init__(game)
 
-    def choose_action(self, state: State) -> Optional[Action]:
+    def choose_action(self, state: State) -> None:
 
         reasonable_actions, winning_action = self.get_actions(state, 1)
 
         if winning_action is not None:
-            return winning_action
-        if len(reasonable_actions) > 0:
-            return choice(reasonable_actions)
+            self.best_action = winning_action
+        elif len(reasonable_actions) > 0:
+            self.best_action = choice(reasonable_actions)
 
         # every action leads to the defeat
-        return choice(self.game.actions_for(state, is_opponent=self.is_opponent))
+        else:
+            self.best_action = choice(self.game.actions_for(state, is_opponent=self.is_opponent))
 
     def is_action_reasonable(self, curr_state: State, look_forward: int, is_opponent: bool) -> bool:
         if look_forward == 0:
