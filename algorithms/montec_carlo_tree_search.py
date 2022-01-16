@@ -24,16 +24,16 @@ class MCTS(Bot):
         self.n_rollouts = n_rollouts
 
 
-    def select(self, node: Node) -> Node:
-        return node if not node.children else self.select(max(node.children, key=self.ucb))
+    def select(self, node: Node, is_opponent: bool) -> Node:
+        return (node, is_opponent) if len(node.children) == 0 else self.select(max(node.children, key=self.ucb), not is_opponent)
 
 
-    def expand(self, node: Node):
+    def expand(self, node: Node, is_oponnent: bool):
         if self.game.is_terminal_state(node.game_state):
-            return node 
+            return node
         node.children = [
             Node(parent=node, game_state=self.game.take_action(node.game_state, a), action=a)
-            for a in self.game.actions_for(node.game_state) # TODO: pass 'is_oponent' parameter
+            for a in self.game.actions_for(node.game_state, is_oponnent) 
         ]
         return random.choice(node.children)
 
@@ -48,17 +48,18 @@ class MCTS(Bot):
 
     
     def propagate(self, reward: float, node: Node) -> None:
+        node.visits += 1 
         if reward > 0:
             node.wins += reward 
-            node.visits += 1 
-        self.propagate(-reward, node.parent)
+        if node.parent:
+            self.propagate(-reward, node.parent)
 
     
     def choose_action(self, state: State) -> Optional[Action]:
         root = Node(game_state=state)
         for _ in range(self.n_rollouts):
-            expanded_node = self.expand(self.select(root))
-            _, reward = self.playout(expanded_node)
+            expanded_node = self.expand(*self.select(root, False))
+            _, reward = self.playout(expanded_node.game_state)
             self.propagate(reward, expanded_node)
         return max(root.children, key=lambda n: n.visits).action
 
