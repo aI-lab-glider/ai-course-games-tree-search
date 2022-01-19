@@ -6,7 +6,7 @@ import random
 
 
 class Match:
-    def __init__(self, game: Game, player_a: Bot, player_b: Bot, timeout=2):
+    def __init__(self, game: Game, player_a: Bot, player_b: Bot, timeout=1):
         self.game = game
         self.current_state = self.game.initial_state
         self.player_a = player_a
