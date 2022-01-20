@@ -3,7 +3,7 @@ from games.tictactoe.state import TicTacToeState
 from games.tictactoe.action import TicTacToeAction
 from utils.pil_utils import GridDrawer
 from PIL import Image, ImageFont
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 import numpy as np
 
 
@@ -34,7 +34,7 @@ class TicTacToeGame(Game[TicTacToeState, TicTacToeAction]):
     def take_action(self, state: TicTacToeState, action: TicTacToeAction) -> TicTacToeState:
         return action.apply(state)
 
-    def _find_winner(self, state: TicTacToeState) -> Optional[str]:
+    def _find_winner(self, state: TicTacToeState) -> str | None:
         for row in range(3):
             if (state.board[row, :] == state.board[row, 0]).all() and state.board[row, 0] != ' ':
                 return state.board[row, 0]
