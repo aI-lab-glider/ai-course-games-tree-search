@@ -1,4 +1,4 @@
-from typing import List, Union, Tuple
+from typing import List, Tuple
 from games.twenty_forty_eight.state import TwentyFortyEightState
 from games.twenty_forty_eight.action import TwentyFortyEightPlayerAction, TwentyFortyEightOpponentAction, Direction
 from base.game import Game
@@ -23,7 +23,7 @@ class TwentyFortyEightGame(Game):
         return state
 
     def actions_for(self, from_state: TwentyFortyEightState, is_opponent: bool) -> List[
-            Union[TwentyFortyEightPlayerAction, TwentyFortyEightOpponentAction]]:
+            TwentyFortyEightPlayerAction | TwentyFortyEightOpponentAction]:
         if is_opponent:
             return [TwentyFortyEightOpponentAction(row, col, block_value=random.choices([2, 4], weights=[0.9, 0.1])[0])
                     for row in range(self.board_dim) for col in range(self.board_dim)
@@ -61,7 +61,7 @@ class TwentyFortyEightGame(Game):
         return self._is_able_to_move_in_direction(direction, state)
 
     def take_action(self, state: TwentyFortyEightState,
-                    action: Union[TwentyFortyEightPlayerAction, TwentyFortyEightOpponentAction]) -> TwentyFortyEightState:
+                    action: TwentyFortyEightPlayerAction | TwentyFortyEightOpponentAction) -> TwentyFortyEightState:
         return action.apply(state)
 
     def _value_for_terminal(self, state: TwentyFortyEightState) -> int:

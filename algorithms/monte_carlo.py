@@ -1,4 +1,4 @@
-from typing import Optional, Dict
+from typing import Dict
 from base.action import Action
 from base.bot import Bot, G
 from base.state import State

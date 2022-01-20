@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from base.state import State
 from base.game import Game
 
-from typing import TypeVar, Generic, Any, cast
+from typing import TypeVar, Generic, Any
 
 S = TypeVar('S', bound=State)
 G = TypeVar('G', bound=Game)

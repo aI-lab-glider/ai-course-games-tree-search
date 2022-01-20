@@ -1,4 +1,4 @@
-from typing import Optional, List, Tuple
+from typing import List, Tuple
 
 from base.action import Action
 from base.bot import Bot, G
@@ -30,7 +30,7 @@ class NearSighted(Bot):
         return all(self.is_action_reasonable(self.game.take_action(curr_state, action), look_forward - 1, is_opponent=not is_opponent)
                    for action in self.game.actions_for(curr_state, is_opponent=not is_opponent))
 
-    def get_actions(self, state: State, look_forward: int) -> Tuple[List[Optional[Action]], Optional[Action]]:
+    def get_actions(self, state: State, look_forward: int) -> Tuple[List[Action | None], Action | None]:
 
         reasonable_actions = [action for action in self.game.actions_for(state, is_opponent=self.is_opponent) if
                               self.is_action_reasonable(self.game.take_action(state, action), look_forward, is_opponent=self.is_opponent)]

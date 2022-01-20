@@ -3,7 +3,7 @@ from base.heuristic import Heuristic
 from base.state import State
 from base.action import Action
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar, Optional
+from typing import Generic, TypeVar
 
 G = TypeVar('G', bound=Game)
 H = TypeVar('H', bound=Heuristic)
@@ -19,8 +19,8 @@ class Bot(ABC, Generic[G]):
         return self._best_action
 
     @best_action.setter 
-    def best_action(self, a: Optional[Action]) -> None:
-        if not isinstance(a, Action or None):
+    def best_action(self, a: Action | None) -> None:
+        if not isinstance(a, Action | None):
             raise TypeError(f"Invalid action type '{type(a)}'")
         self._best_action = a 
 

@@ -4,7 +4,7 @@ from base.bot import HeuristicBot, G, H
 from base.state import State
 from base.action import Action
 import math
-from typing import Tuple, Optional
+from typing import Tuple
 
 
 class MinimaxDepth(HeuristicBot):
@@ -15,12 +15,12 @@ class MinimaxDepth(HeuristicBot):
     def choose_action(self, state: State) -> None:
         self.best_action = self._minimax(state, is_opponent=False, depth=0)[0]
 
-    def _minimax(self, state: State, is_opponent: bool, depth: int) -> Tuple[Optional[Action], float]:
+    def _minimax(self, state: State, is_opponent: bool, depth: int) -> Tuple[Action | None, float]:
         if depth == self.max_depth or self.game.is_terminal_state(state):
             return None, self.heuristic(state)
         return self._make_move(state, is_opponent, depth)
 
-    def _make_move(self, from_state: State, is_opponent: bool, depth: int) -> Tuple[Optional[Action], float]:
+    def _make_move(self, from_state: State, is_opponent: bool, depth: int) -> Tuple[Action | None, float]:
         if is_opponent:
             best_state_value = math.inf
             selection_condition = operator.lt

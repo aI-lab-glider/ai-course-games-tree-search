@@ -23,27 +23,27 @@ class TwentyFortyEightHeuristic(Heuristic[TwentyFortyEightState]):
         return self.empty_tiles(state) + self.max_tile_position(state) + self.weighted_board(state) \
                - self.smoothness(state) + self._monotonicity(state)
 
-    def empty_tiles(self, state: TwentyFortyEightState):
+    def empty_tiles(self, state: TwentyFortyEightState) -> int:
         return 512 * np.count_nonzero(state.board == 0)
 
-    def max_tile_position(self, state: TwentyFortyEightState):
+    def max_tile_position(self, state: TwentyFortyEightState) -> int:
         max_tile = np.amax(state.board)
         if state.board[0][0] == max_tile:
             return MAX_TILE_CREDIT
         else:
             return -MAX_TILE_CREDIT
 
-    def weighted_board(self, state: TwentyFortyEightState):
-        return np.multiply(WEIGHT_MATRIX, state.board).sum()
+    def weighted_board(self, state: TwentyFortyEightState) -> int:
+        return (WEIGHT_MATRIX * state.board).sum()
 
-    def smoothness(self, state: TwentyFortyEightState):
+    def smoothness(self, state: TwentyFortyEightState) -> int:
         smoothness = sum(abs(state.board[row][col] - state.board[row + 1][col])
                          for row in range(state.shape[0] - 1) for col in range(state.shape[1]))
         smoothness += sum(abs(state.board[row][col] - state.board[row][col + 1])
                           for row in range(state.shape[0]) for col in range(state.shape[1] - 1))
         return 1024 * smoothness
 
-    def _monotonicity(self, state: TwentyFortyEightState):
+    def _monotonicity(self, state: TwentyFortyEightState) -> int:
         monotonicity = sum(state.board[row + 1][col]
                            for col in range(state.shape[1]) for row in range(state.shape[0] - 1)
                            if state.board[row][col] > state.board[row + 1][col])
