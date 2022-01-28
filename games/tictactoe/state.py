@@ -19,3 +19,11 @@ class TicTacToeState(State):
                 print(sign, end='  ')
             print()
         print()
+
+    def __hash__(self):
+        return hash(self.board.data.tobytes())
+
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return hash(self) == hash(other)
+        return False

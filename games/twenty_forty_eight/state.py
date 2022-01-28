@@ -14,3 +14,11 @@ class TwentyFortyEightState(State):
 
     def show(self):
         print(self.board)
+    
+    def __hash__(self):
+        return hash(self.board.data.tobytes())
+
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return hash(self) == hash(other)
+        return False

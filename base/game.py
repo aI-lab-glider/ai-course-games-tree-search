@@ -30,17 +30,14 @@ class Game(ABC, Generic[S, A]):
     @abstractmethod
     def _value_for_terminal(self, state: S) -> float:
         """Returns value of a terminal state"""
-        raise NotImplementedError
 
     @abstractmethod
     def is_terminal_state(self, state: S) -> bool:
         """Returns if given state is a terminal state"""
-        raise NotImplementedError
 
     @abstractmethod
     def switch_players(self):
         """Returns game with switched players"""
-        raise NotImplementedError
 
     def to_image(self, state: S, size: Tuple[int, int] = (800, 800)) -> Optional[Image]:
         """Converts state to its image representation."""
