@@ -40,11 +40,11 @@ class MCTS(Bot[G, A]):
         if self.root is None or not self.use_cache:  # first call
             return Node(game_state=state)
 
-        oponnent_node = next((n for n in self.root.children if n.action == self.best_action), None)
-        if oponnent_node is None:
+        opponent_node = next((n for n in self.root.children if n.action == self.best_action), None)
+        if opponent_node is None:
             # __eq__() method was implemented incorrectly in action class, or best_action was not updated during last call
             return Node(game_state=state)
-        current_node = next((n for n in oponnent_node.children if n.game_state == state), None)
+        current_node = next((n for n in opponent_node.children if n.game_state == state), None)
         return current_node or Node(game_state=state)
 
     def _select(self, node: Node, is_opponent: bool) -> Tuple[Node, bool]:

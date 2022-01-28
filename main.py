@@ -4,7 +4,7 @@ from algorithms.minimax import Minimax
 from algorithms.minimax_alpha_beta import MinimaxAlphaBeta
 from algorithms.monte_carlo import MonteCarlo
 from algorithms.random_player import RandomPlayer
-from algorithms.montec_carlo_tree_search import MCTS
+from algorithms.monte_carlo_tree_search import MCTS
 from match import Match
 
 
