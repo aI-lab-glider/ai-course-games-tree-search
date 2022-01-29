@@ -39,5 +39,6 @@ class Match:
     def to_gif(self):
         img_name = f"{self.game.__class__.__name__}_{self.player_a.__class__.__name__}_{self.player_b.__class__.__name__}.gif"
         imgs = [self.game.to_image(state) for state in self.states]
-        imgs[0].save(img_name, save_all=True, append_images=imgs[1:],
-                     format='GIF', optimize=False, duration=500, loop=1)
+        if all(imgs):
+            imgs[0].save(img_name, save_all=True, append_images=imgs[1:],
+                         format='GIF', optimize=False, duration=500, loop=1)

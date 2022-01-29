@@ -1,7 +1,7 @@
 from base.game import Game
 from games.ultimate_tic_tac_toe.state import UTTTState
 from games.ultimate_tic_tac_toe.action import UTTTAction
-from typing import List, Optional
+from typing import List
 import numpy as np
 from itertools import product
 

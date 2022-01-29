@@ -12,9 +12,9 @@ from match import Match
 if __name__ == "__main__":
     game = UltimateTicTacToeGame()
     player_a = RandomPlayer(game)
-    player_b = MonteCarlo(game.switch_players(), 100)
+    # player_b = MonteCarlo(game.switch_players(), 100)
     # game = TwentyFortyEightGame()
-    # player_b = MCTS(game, n_rollouts=20)
+    player_b = MCTS(game.switch_players(), n_rollouts=20)
     # player_b = RandomPlayer(game, is_opponent=True)
     match = Match(game, player_a, player_b)
     match.play()
