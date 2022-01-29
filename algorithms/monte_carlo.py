@@ -31,9 +31,10 @@ class MonteCarlo(Bot):
         current_state = from_state
         is_opponent = True
         while not self.game.is_terminal_state(current_state):
-            action = random.choice(self.game.actions_for(current_state, is_opponent))
+            actions = self.game.actions_for(current_state, is_opponent)
+            if not actions:
+                break
+            action = random.choice(actions)
             current_state = self.game.take_action(current_state, action)
             is_opponent = not is_opponent
         return current_state
-
-

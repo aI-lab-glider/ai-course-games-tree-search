@@ -3,6 +3,10 @@ from games.ultimate_tic_tac_toe.state import UTTTState
 from games.ultimate_tic_tac_toe.action import UTTTAction
 from typing import List, Optional
 import numpy as np
+from itertools import product
+
+EMPTY_SIGN = ' '
+TIE_SIGN = '_'
 
 
 class UltimateTicTacToeGame(Game[UTTTState, UTTTAction]):
@@ -13,16 +17,27 @@ class UltimateTicTacToeGame(Game[UTTTState, UTTTAction]):
         super().__init__(initial_state)
 
     def _initial_game_state(self) -> UTTTState:
-        return UTTTState(board=np.full((9, 3, 3), ' '), curr_block=4)
+        return UTTTState(board=np.full((9, 3, 3), EMPTY_SIGN), curr_block_idx=4)
 
     def actions_for(self, state: UTTTState, is_opponent: bool) -> List[UTTTAction]:
         sign = self._get_sign(is_opponent)
-        if ' ' not in state.board[state.curr_block] or self._is_block_terminated(state, state.curr_block):
-            return [UTTTAction(sign, block, row, col) for block in range(9) for row in range(3) for col in range(3)
-                    if state.board[block, row, col] == ' ' and not self._is_block_terminated(state, block)]
-        else:
-            return [UTTTAction(sign, state.curr_block, row, col) for row in range(3) for col in range(3)
-                    if state.board[state.curr_block, row, col] == ' ']
+
+        row_count, col_count = self.block_shape(state.board)
+
+        def positions(block_idxs):
+            return((block_idx, row, col) for block_idx, row, col in product(block_idxs, range(row_count), range(col_count))
+                   if state.board[block_idx, row, col] == EMPTY_SIGN and not self._is_block_terminated(state.board[block_idx]))
+
+        valid_blocks_idxs = range(self.blocks_count(state.board)) if self._is_block_terminated(
+            state.board[state.curr_block_idx]) else [state.curr_block_idx]
+
+        return [UTTTAction(sign, block, row, col) for block, row, col in positions(valid_blocks_idxs)]
+
+    def block_shape(self, board: np.ndarray):
+        return board.shape[1:] if board.ndim == 3 else board.shape
+
+    def blocks_count(self, board: np.ndarray):
+        return board.shape[0] if board.ndim == 3 else 1
 
     def take_action(self, state: UTTTState, action: UTTTAction) -> UTTTState:
         return action.apply(state)
@@ -36,8 +51,9 @@ class UltimateTicTacToeGame(Game[UTTTState, UTTTAction]):
         return 0
 
     def is_terminal_state(self, state: UTTTState) -> bool:
-        board = np.reshape([self._check_3x3(state.board[block]) for block in range(9)], (3, 3))
-        return ' ' not in board or self._value_for_terminal(state) in [-1, 1]
+        board = np.reshape([self._find_winner_sign(state.board[block])
+                           for block in range(self.blocks_count(state.board))], self.block_shape(state.board))
+        return EMPTY_SIGN not in board or self._find_winner_sign(board) in [self.opponent_sign, self.player_sign, TIE_SIGN]
 
     def switch_players(self) -> 'UltimateTicTacToeGame':
         return UltimateTicTacToeGame(player_sign=self.opponent_sign, opponent_sign=self.player_sign)
@@ -46,28 +62,24 @@ class UltimateTicTacToeGame(Game[UTTTState, UTTTAction]):
         return self.opponent_sign if is_opponent else self.player_sign
 
     def _find_winner(self, state: UTTTState) -> str:
-        board = np.reshape([self._check_3x3(state.board[block]) for block in range(9)], (3, 3))
-        return self._check_3x3(board, False)
+        board = np.reshape([self._find_winner_sign(state.board[block])
+                           for block in range(self.blocks_count(state.board))], self.block_shape(state.board))
+        return self._find_winner_sign(board)
 
-    def _is_block_terminated(self, state: UTTTState,  block: int) -> bool:
-        return ' ' not in state.board[block] or self._check_3x3(state.board[block]) in ['X', 'O', '_']
+    def _is_block_terminated(self, block: np.array) -> bool:
+        return EMPTY_SIGN not in block or self._find_winner_sign(block) in [self.player_sign, self.opponent_sign, TIE_SIGN]
 
-    def _check_3x3(self, board, is_block: bool = True) -> str:
-        if ' ' not in board and is_block:
-            return '_'
-        for row in range(3):
-            if board[row, 0] not in [' ', '_'] and (board[row, :] == board[row, 0]).all():
+    def _find_winner_sign(self, board) -> str:
+        row_count, col_count = self.block_shape(board)
+        for row in range(row_count):
+            if board[row, 0] in [EMPTY_SIGN, TIE_SIGN] and (board[row, :] == board[row, 0]).all():
                 return board[row, 0]
 
-        for col in range(3):
-            if board[0, col] not in [' ', '_'] and (board[:, col] == board[0, col]).all():
+        for col in range(col_count):
+            if board[0, col] in [EMPTY_SIGN, TIE_SIGN] and (board[:, col] == board[0, col]).all():
                 return board[0, col]
 
         if (board.diagonal() == board[1, 1]).all() or (np.fliplr(board).diagonal() == board[1, 1]).all():
-            if board[1, 1] not in [' ', '_']:
+            if board[1, 1] in [EMPTY_SIGN, TIE_SIGN]:
                 return board[1, 1]
-        return ' '
-
-
-
-
+        return TIE_SIGN if EMPTY_SIGN not in board else EMPTY_SIGN

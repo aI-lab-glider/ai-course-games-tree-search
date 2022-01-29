@@ -30,8 +30,7 @@ class Match:
             assert to_ctx_mgr.state == to_ctx_mgr.EXECUTING
             _ = player.choose_action(self.current_state)
         print("timed out?", to_ctx_mgr.state == to_ctx_mgr.TIMED_OUT)
-        action = player.best_action or random.choice(
-            self.game.actions_for(self.current_state, is_opponent=self.turn))
+        action = player.best_action or random.choice(self.game.actions_for(self.current_state, is_opponent=self.turn))
         return self.game.take_action(self.current_state,  action)
 
     def _is_match_end(self) -> bool:

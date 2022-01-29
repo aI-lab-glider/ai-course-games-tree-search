@@ -1,12 +1,12 @@
 from base.state import State
-from dataclasses import dataclass
+from dataclasses import astuple, dataclass
 from numpy.typing import NDArray
 
 
 @dataclass
 class UTTTState(State):
     board: NDArray
-    curr_block: int
+    curr_block_idx: int
 
     def show(self):
         for i in range(3):
@@ -23,3 +23,9 @@ class UTTTState(State):
                 print(s, end="\n")
             print()
         print("=====================")
+
+    def __hash__(self):
+        return hash(astuple(self))
+
+    def __eq__(self, other):
+        return (self.board == other.board).all() and self.curr_block_idx == other.curr_block_idx
