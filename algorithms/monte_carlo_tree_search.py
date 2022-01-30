@@ -34,7 +34,7 @@ class MCTS(Bot[G, A]):
             expanded_node = self._expand(*self._select(self.root, False))
             reward = self._playout(expanded_node.game_state)
             self._propagate(reward, expanded_node)
-            self.best_action = max(self.root.children, key=lambda n: n.visits).action
+        self.best_action = max(self.root.children, key=lambda n: n.accumulated_reward).action
 
     def _find_root(self, state: State) -> Node:
         if self.root is None or not self.use_cache:  # first call

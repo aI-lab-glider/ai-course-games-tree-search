@@ -24,6 +24,4 @@ class TicTacToeState(State):
         return hash(self.board.data.tobytes())
 
     def __eq__(self, other):
-        if type(other) is type(self):
-            return hash(self) == hash(other)
-        return False
+        return type(other) is type(self) and hash(self) == hash(other)
