@@ -7,6 +7,7 @@ from algorithms.random_player import RandomPlayer
 from algorithms.monte_carlo_tree_search import MCTS
 from games.ultimate_tic_tac_toe.game import UltimateTicTacToeGame
 from match import Match
+from games.checkers.game import CheckersGame
 
 
 if __name__ == "__main__":
@@ -19,3 +20,12 @@ if __name__ == "__main__":
     match = Match(game, player_a, player_b)
     match.play()
     match.to_gif()
+    # game = TicTacToeGame()
+    # player_a = Minimax(game)
+    # player_b = Minimax(game.switch_players())
+    # match = Match(game, player_a, player_b)
+    # match.play()
+    game = CheckersGame((12,12))
+    game.initial_state.show()
+
+
