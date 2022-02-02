@@ -36,11 +36,16 @@ class CheckersGame(Game[CheckersState, CheckersAction]):
         for piece in self.pieces:
             if piece.turn != is_opponent:
                 for move in Move:
-                    if self.is_valid_move(state, piece, move):
-                        actions.append(CheckersAction(move, piece, self.pieces, False))
-                    is_valid, moves = self.is_valid_jump(state, piece, move, [])
-                    if is_valid:
-                        actions.append(CheckersAction(moves, piece, self.pieces, True))
+                    if piece.king == True:
+                        is_valid, moves = self.is_valid_king_move(state, piece, move, [])
+                        if is_valid:
+                            actions.append(CheckersAction(moves, piece, self.pieces, False))
+                    else:
+                        is_valid, moves = self.is_valid_jump(state, piece, move, [])
+                        if is_valid:
+                            actions.append(CheckersAction(moves, piece, self.pieces, True))
+                        elif self.is_valid_move(state, piece, move):
+                            actions.append(CheckersAction(move, piece, self.pieces, False))
         if len(actions) == 0:
             self.no_actions = True
         return actions           
@@ -74,6 +79,23 @@ class CheckersGame(Game[CheckersState, CheckersAction]):
         return False, moves
 
 
+    def is_valid_king_move(self, state: CheckersState, piece: CheckersPiece, move: Move, moves: List = []) -> bool:    
+        new_row = piece.row + move.value[0] 
+        new_col = piece.col + move.value[1] 
+        if self.on_board(new_row, new_col):  
+            if state.board[new_row, new_col] == ' ':
+                moves.append(move)
+                for next_move in Move:
+                    if (next_move.value[0], next_move.value[1]) != (-move.value[0], -move.value[1]):
+                        self.is_valid_king_move(state, CheckersPiece(piece.id, new_row, new_col), next_move, moves)
+                return True, moves
+            elif state.board[new_row, new_col] not in [piece.id.value, piece.id.value.capitalize(), ' ']: # opposite piece
+                pass  # jump and in this case king can make a second move if it can kill opposite piece
+            else:     # team piece
+                return False, moves
+        return False, moves
+
+
     def on_board(self, row: int, col: int) -> bool:
         return 0 <= row < self.board_shape[0] and 0 <= col < self.board_shape[1]
 
@@ -97,9 +119,9 @@ class CheckersGame(Game[CheckersState, CheckersAction]):
 
     def _value_for_terminal(self, state: CheckersState) -> float:
         #unique, counts = np.unique(state.board, return_counts=True)
-        if 'b' not in state.board:
+        if (Figure.WHITE_PIECE.value or Figure.WHITE_PIECE.value.capitalize()) not in state.board:
             return 1
-        if 'w' not in state.board:
+        if (Figure.BLACK_PIECE.value or Figure.BLACK_PIECE.value.capitalize()) not in state.board:
             return -1
         return 0
 
