@@ -34,8 +34,8 @@ class CheckersAction(Action):
         board[self.piece.row][self.piece.col] = ' '
         self.piece.row += self.moves.value[0]
         self.piece.col += self.moves.value[1]
-        if self.piece.row in [0, board.shape[0]-1]:
-            self.make_king(board)
+        # if self.piece.row in [0, board.shape[0]-1]:
+        #     self.make_king(board)
         board[self.piece.row][self.piece.col] = self.piece.id.value
         return board
 
@@ -49,8 +49,8 @@ class CheckersAction(Action):
                     self.pieces.remove(piece)
             self.piece.row += move.value[0] * 2
             self.piece.col += move.value[1] * 2  
-            if self.piece.row in [0, board.shape[0]-1]:
-                self.make_king(board)
+            # if self.piece.row in [0, board.shape[0]-1]:
+            #     self.make_king(board)
             board[self.piece.row][self.piece.col] = self.piece.id.value
         return board
 
