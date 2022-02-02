@@ -27,5 +27,6 @@ if __name__ == "__main__":
     # match.play()
     game = CheckersGame((12,12))
     game.initial_state.show()
+    print(len(game.actions_for(game.initial_state, True)))
 
 
