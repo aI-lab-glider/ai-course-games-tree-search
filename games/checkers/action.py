@@ -1,5 +1,5 @@
 from games.checkers.state import CheckersState
-from games.checkers.piece import CheckersPiece
+from games.checkers.piece import CheckersPiece, Figure
 from base.action import Action
 from enum import Enum
 from numpy.typing import NDArray
@@ -34,6 +34,8 @@ class CheckersAction(Action):
         board[self.piece.row][self.piece.col] = ' '
         self.piece.row += self.moves.value[0]
         self.piece.col += self.moves.value[1]
+        if self.piece.row in [0, board.shape[0]-1]:
+            self.make_king(board)
         board[self.piece.row][self.piece.col] = self.piece.id.value
         return board
 
@@ -47,8 +49,26 @@ class CheckersAction(Action):
                     self.pieces.remove(piece)
             self.piece.row += move.value[0] * 2
             self.piece.col += move.value[1] * 2  
+            if self.piece.row in [0, board.shape[0]-1]:
+                self.make_king(board)
             board[self.piece.row][self.piece.col] = self.piece.id.value
         return board
+
+
+    def make_king(self, board: NDArray):
+        if self.piece.id == Figure.WHITE_PIECE:
+            if self.piece.row == board.shape[0]-1:
+                self.piece.id = Figure.WHITE_KING
+                self.piece.king = True
+        else:
+            if self.piece.row == 0:
+                self.piece.id == Figure.BLACK_KING
+                self.piece.king = True
+        return None
+
+
+    def king_move(self, board: NDArray):
+        pass
 
 
     def __hash__(self):

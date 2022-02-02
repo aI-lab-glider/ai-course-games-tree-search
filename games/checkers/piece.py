@@ -15,10 +15,10 @@ class CheckersPiece:
         self.king = False    
         self.turn = True if self.id == Figure.WHITE_PIECE else False
 
-    def make_king(self):
-        self.king == True
-        self.id = Figure.WHITE_KING if self.id == Figure.WHITE_PIECE else Figure.BLACK_KING
-        return None
+    # def make_king(self):
+    #     self.king == True
+    #     self.id = Figure.WHITE_KING if self.id == Figure.WHITE_PIECE else Figure.BLACK_KING
+    #     return None
 
     def __hash__(self):
         return hash(self.__str__())
