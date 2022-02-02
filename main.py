@@ -1,9 +1,9 @@
-# from games.tictactoe.game import TicTacToeGame
-# from games.twenty_forty_eight.game import TwentyFortyEightGame
-# from algorithms.minimax import Minimax
-# from algorithms.minimax_alpha_beta import MinimaxAlphaBeta
-# from algorithms.monte_carlo import MonteCarlo
-# from algorithms.random_player import RandomPlayer
+from games.tictactoe.game import TicTacToeGame
+from games.twenty_forty_eight.game import TwentyFortyEightGame
+from algorithms.minimax import Minimax
+from algorithms.minimax_alpha_beta import MinimaxAlphaBeta
+from algorithms.monte_carlo import MonteCarlo
+from algorithms.random_player import RandomPlayer
 from algorithms.monte_carlo_tree_search import MCTS
 from games.ultimate_tic_tac_toe.game import UltimateTicTacToeGame
 from match import Match
