@@ -1,11 +1,11 @@
 from base.state import State
 from dataclasses import astuple, dataclass
+from games.tic_tac_toe.base_tic_tac_toe_state import BaseTicTacToeState
 from numpy.typing import NDArray
 
 
 @dataclass
-class UTTTState(State):
-    board: NDArray
+class UTTTState(BaseTicTacToeState):
     curr_block_idx: int
 
     def show(self):

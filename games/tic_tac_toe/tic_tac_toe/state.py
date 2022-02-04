@@ -1,12 +1,12 @@
 from base.state import State
 from dataclasses import dataclass
 from typing import Tuple, cast
+from games.tic_tac_toe.base_tic_tac_toe_state import BaseTicTacToeState
 from numpy.typing import NDArray
 
 
 @dataclass
-class TicTacToeState(State):
-    board: NDArray
+class TicTacToeState(BaseTicTacToeState):
 
     @property
     def shape(self) -> Tuple[int, int]:

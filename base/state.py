@@ -1,11 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Hashable
 
 
-class State(ABC):
-    @abstractmethod
-    def __hash__(self):
-        pass
-
-    @abstractmethod
-    def __eq__(self, other):
-        pass
+State = Hashable

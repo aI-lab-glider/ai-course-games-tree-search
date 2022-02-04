@@ -1,4 +1,4 @@
-from games.ultimate_tic_tac_toe.state import UTTTState
+from games.tic_tac_toe.ultimate_tic_tac_toe.state import UTTTState
 from copy import deepcopy
 from dataclasses import astuple, dataclass
 from base.action import Action

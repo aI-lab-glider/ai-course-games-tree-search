@@ -1,5 +1,5 @@
 from operator import eq
-from games.tictactoe.state import TicTacToeState
+from games.tic_tac_toe.tic_tac_toe.state import TicTacToeState
 from copy import deepcopy
 from dataclasses import dataclass
 from base.action import Action
