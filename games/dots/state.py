@@ -10,7 +10,6 @@ class Dot:
     color: str
     is_surrounded: bool
     is_surrounded_by_opponent: bool
-    is_chain: bool
 
 
 @dataclass

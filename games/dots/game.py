@@ -11,12 +11,12 @@ class DotsGame(Game[DotsState, DotsAction]):
     def __init__(self, player_color='r', opponent_color='b'):
         self.player_color = player_color
         self.opponent_color = opponent_color
-        self.board_dim = 5
+        self.board_dim = 10
         initial_state = self.initial_game_state()
         super().__init__(initial_state)
 
     def initial_game_state(self) -> DotsState:
-        board = [[Dot(color=' ', is_surrounded=False, is_surrounded_by_opponent=False, is_chain=False)
+        board = [[Dot(color=' ', is_surrounded=False, is_surrounded_by_opponent=False)
                   for _ in range(self.board_dim)] for _ in range(self.board_dim)]
         return DotsState(
             board=np.array(board),
@@ -35,7 +35,7 @@ class DotsGame(Game[DotsState, DotsAction]):
     def actions_for(self, state: DotsState, is_opponent: bool) -> List[DotsAction]:
         color = self._get_color(is_opponent)
         return [DotsAction(color, row, col) for row in range(self.board_dim) for col in range(self.board_dim)
-                if state.board[row, col].color == ' ']
+                if state.board[row, col].color == ' ' and not state.board[row, col].is_surrounded]
 
     def take_action(self, state: DotsState, action: DotsAction) -> DotsState:
         return action.apply(state)
@@ -55,7 +55,8 @@ class DotsGame(Game[DotsState, DotsAction]):
         return 0
 
     def is_terminal_state(self, state: DotsState) -> bool:
-        return all(state.board[row, col].color != ' ' for row in range(self.board_dim) for col in range(self.board_dim))
+        return all(state.board[row, col].color != ' ' or state.board[row, col].is_surrounded
+                   for row in range(self.board_dim) for col in range(self.board_dim))
 
     def to_image(self, state: DotsState, size: Tuple[int, int] = (800, 800)) -> Image.Image:
         background_color = (255, 233, 208)
@@ -73,7 +74,7 @@ class DotsGame(Game[DotsState, DotsAction]):
             for i in range(len(chain.dots) - 1):
                 x_start, y_start = grid_drawer.get_cell_coords(0, chain[i][1], chain[i][0], have_border=False)[0:2]
                 x_stop, y_stop = grid_drawer.get_cell_coords(0, chain[i+1][1], chain[i+1][0], have_border=False)[0:2]
-                grid_drawer.draw.line((x_start, y_start, x_stop, y_stop), fill=colors[chain.color],width=5)
+                grid_drawer.draw.line((x_start, y_start, x_stop, y_stop), fill=colors[chain.color], width=5)
 
         return image
 
