@@ -72,8 +72,8 @@ class DotsGame(Game[DotsState, DotsAction]):
 
         for chain in state.chains:
             for i in range(len(chain.dots) - 1):
-                x_start, y_start = grid_drawer.get_cell_coords(0, chain[i][1], chain[i][0], have_border=False)[0:2]
-                x_stop, y_stop = grid_drawer.get_cell_coords(0, chain[i+1][1], chain[i+1][0], have_border=False)[0:2]
+                x_start, y_start = grid_drawer.get_cell_coords(0, chain.dots[i][1], chain.dots[i][0], have_border=False)[0:2]
+                x_stop, y_stop = grid_drawer.get_cell_coords(0, chain.dots[i+1][1], chain.dots[i+1][0], have_border=False)[0:2]
                 grid_drawer.draw.line((x_start, y_start, x_stop, y_stop), fill=colors[chain.color], width=5)
 
         return image

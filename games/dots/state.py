@@ -17,12 +17,6 @@ class Chain:
     color: str
     dots: List[Tuple[int, int]]
 
-    def __str__(self):
-        return f'{self.color} {self.dots}'
-
-    def __getitem__(self, item):
-        return self.dots[item]
-
     def __eq__(self, other):
         return self.color == other.color and (self.dots == other.dots or self.dots == other.dots[::-1])
 
