@@ -1,3 +1,4 @@
+from games.checkers.game import CheckersGame
 from games.tic_tac_toe.tic_tac_toe.game import TicTacToeGame
 from games.twenty_forty_eight.game import TwentyFortyEightGame
 from algorithms.minimax import Minimax
@@ -10,7 +11,7 @@ from match import Match
 
 
 if __name__ == "__main__":
-    game = UltimateTicTacToeGame()
+    game = CheckersGame()
     player_a = RandomPlayer(game)
     # player_b = MonteCarlo(game.switch_players(), 100)
     # game = TwentyFortyEightGame()
