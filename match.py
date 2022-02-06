@@ -24,7 +24,6 @@ class Match:
             self.current_state.show()
             self.turn = not self.turn
             self.states.append(self.current_state)
-        print(self.game._value_for_terminal(self.current_state))
 
     def _next_move(self, player: Bot) -> State:
         with stopit.ThreadingTimeout(self.timeout) as to_ctx_mgr:
