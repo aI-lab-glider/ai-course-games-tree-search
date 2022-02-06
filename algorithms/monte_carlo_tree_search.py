@@ -74,7 +74,7 @@ class MCTS(Bot[G, A]):
         node.visits += 1
         node.accumulated_reward += (reward > 0) * reward
         if node.parent:
-            self._propagate(-reward, node.parent)
+            self._propagate(reward, node.parent)
 
     @staticmethod
     def ucb(node: Node, c=1.4) -> float:
