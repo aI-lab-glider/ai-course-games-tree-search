@@ -2,3 +2,4 @@ numpy>=1.21.2
 Pillow~=9.0.0
 types-Pillow~=9.0.5
 stopit
+shapely
