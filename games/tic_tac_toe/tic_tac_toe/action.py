@@ -1,10 +1,11 @@
-from games.tictactoe.state import TicTacToeState
+from operator import eq
+from games.tic_tac_toe.tic_tac_toe.state import TicTacToeState
 from copy import deepcopy
 from dataclasses import dataclass
 from base.action import Action
 
 
-@dataclass
+@dataclass(frozen=True, eq=True)
 class TicTacToeAction(Action):
     sign: str
     row: int
@@ -17,3 +18,8 @@ class TicTacToeAction(Action):
 
     def __hash__(self):
         return hash((self.sign, self.row, self.col))
+
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return hash(self) == hash(other)
+        return False

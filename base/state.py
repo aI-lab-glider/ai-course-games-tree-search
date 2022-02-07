@@ -1,5 +1,5 @@
-from abc import ABC
+from abc import ABC, abstractmethod
+from typing import Hashable
 
 
-class State(ABC):
-    pass
+State = Hashable

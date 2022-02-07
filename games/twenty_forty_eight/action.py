@@ -63,6 +63,11 @@ class TwentyFortyEightPlayerAction(Action):
     def __hash__(self):
         return hash(self.direction)
 
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return hash(self) == hash(other)
+        return False
+
 
 @dataclass
 class TwentyFortyEightOpponentAction(Action):

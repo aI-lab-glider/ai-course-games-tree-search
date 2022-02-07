@@ -6,7 +6,7 @@ import random
 
 
 class Match:
-    def __init__(self, game: Game, player_a: Bot, player_b: Bot, timeout=2):
+    def __init__(self, game: Game, player_a: Bot, player_b: Bot, timeout=1):
         self.game = game
         self.current_state = self.game.initial_state
         self.player_a = player_a
@@ -30,8 +30,7 @@ class Match:
             assert to_ctx_mgr.state == to_ctx_mgr.EXECUTING
             _ = player.choose_action(self.current_state)
         print("timed out?", to_ctx_mgr.state == to_ctx_mgr.TIMED_OUT)
-        action = player.best_action or random.choice(
-            self.game.actions_for(self.current_state, is_opponent=self.turn))
+        action = player.best_action or random.choice(self.game.actions_for(self.current_state, is_opponent=self.turn))
         return self.game.take_action(self.current_state,  action)
 
     def _is_match_end(self) -> bool:
@@ -40,5 +39,6 @@ class Match:
     def to_gif(self):
         img_name = f"{self.game.__class__.__name__}_{self.player_a.__class__.__name__}_{self.player_b.__class__.__name__}.gif"
         imgs = [self.game.to_image(state) for state in self.states]
-        imgs[0].save(img_name, save_all=True, append_images=imgs[1:],
-                     format='GIF', optimize=False, duration=500, loop=1)
+        if all(imgs):
+            imgs[0].save(img_name, save_all=True, append_images=imgs[1:],
+                         format='GIF', optimize=False, duration=500, loop=1)
