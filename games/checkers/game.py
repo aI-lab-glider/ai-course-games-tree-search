@@ -1,121 +1,83 @@
 from base.game import Game
+from games.checkers import EMPTY_SYMBOL
 from games.checkers.state import CheckersState
-from games.checkers.piece import CheckersPiece, Figure
-from games.checkers.action import CheckersAction, Move
+from games.checkers.piece import BlackPiece, CheckersPiece, PlayerColor, WhitePiece
+from games.checkers.action import CheckersAction
 import numpy as np
-from typing import Tuple, List
+from typing import Sequence, Tuple
+from itertools import product
 
 
 class CheckersGame(Game[CheckersState, CheckersAction]):
-    def __init__(self, board_shape: Tuple[int, int] = (8, 8)):
+    """
+    The following rules are applied https://youtu.be/WD3NTNQElew with the exception, 
+    that the starting color is White instead of black.
+    """
+
+    def __init__(
+            self, board_shape: Tuple[int, int] = (8, 8),
+            player_color: PlayerColor = PlayerColor.WHITE, opponent_color: PlayerColor = PlayerColor.BLACK):
         self.board_shape = board_shape
-        self.pieces = []
+        self._player_color, self._opponent_color = player_color, opponent_color
         initial_state = self.initial_game_state()
-        self.no_actions = False
         super().__init__(initial_state)
 
     def initial_game_state(self) -> CheckersState:
-        board = np.full(self.board_shape, ' ')
-        for row in range(self.board_shape[0]):
-            for col in range(self.board_shape[1]):
-                if col % 2 == ((row + 1) % 2):
-                    if row < self.board_shape[0] / 2 - 1:
-                        piece = CheckersPiece(Figure.WHITE_PIECE, row, col)
-                        board[row][col] = piece.id.value
-                        self.pieces.append(piece)
-                    elif row > self.board_shape[0] / 2:
-                        piece = CheckersPiece(Figure.BLACK_PIECE, row, col)
-                        board[row][col] = piece.id.value
-                        self.pieces.append(piece)
-        return CheckersState(board)
+        board = np.full(self.board_shape, EMPTY_SYMBOL, dtype=object)
+        for row, col in product(*[range(d) for d in self.board_shape]):
+            if col % 2 == ((row + 1) % 2):
+                if row < self.board_shape[0] / 2 - 1:
+                    piece = WhitePiece(row, col)
+                    board[row, col] = piece
 
-    def actions_for(self, state: CheckersState, is_opponent: bool) -> List[CheckersAction]:
+                elif row > self.board_shape[0] / 2:
+                    piece = BlackPiece(row, col)
+                    board[row, col] = piece
+
+        return CheckersState(board, self._player_color)
+
+    def actions_for(self, state: CheckersState, is_opponent: bool) -> Sequence[CheckersAction]:
         actions = []
-        for piece in self.pieces:
-            if piece.turn != is_opponent:
-                for move in Move:
-                    if piece.king == True:
-                        is_valid, moves = self.is_valid_king_move(state, piece, move, [])
-                        if is_valid:
-                            actions.append(CheckersAction(moves, piece, self.pieces, False))
-                    else:
-                        is_valid, moves = self.is_valid_jump(state, piece, move, [])
-                        if is_valid:
-                            actions.append(CheckersAction(moves, piece, self.pieces, True))
-                        elif self.is_valid_move(state, piece, move):
-                            actions.append(CheckersAction(move, piece, self.pieces, False))
-        if len(actions) == 0:
-            self.no_actions = True
+        target_color = self._opponent_color if is_opponent else self._player_color
+        movable_pieces = [p for p in state.pieces if p.color == target_color]
+        for piece in movable_pieces:
+            for chain in self.find_beat_chains_for_piece(state.board, piece):
+                actions.append(CheckersAction(piece, chain, state))
+        jumps_exists = any(actions)
+        if jumps_exists:
+            return actions
+
+        for piece in movable_pieces:
+            for move in piece.potential_moves(state.board):
+                actions.append(CheckersAction(piece, [move], state))
         return actions
 
-    def is_valid_move(self, state: CheckersState, piece: CheckersPiece, move: Move) -> bool:
-        piece_moves = {
-            Figure.WHITE_PIECE: [Move.WHITE_LEFT, Move.WHITE_RIGHT],
-            Figure.BLACK_PIECE: [Move.BLACK_LEFT, Move.BLACK_RIGHT]
-        }
-        if move in piece_moves[piece.id]:
-            new_row = piece.row + move.value[0]
-            new_col = piece.col + move.value[1]
-            if self.on_board(new_row, new_col):
-                if state.board[new_row, new_col] == ' ':
-                    return True
-        return False
-
-    def is_valid_jump(self, state: CheckersState, piece: CheckersPiece, move: Move, moves: List = []) -> Tuple[bool, List[Move]]:
-        new_row = piece.row + move.value[0] * 2
-        new_col = piece.col + move.value[1] * 2
-        if self.on_board(new_row, new_col):
-            if state.board[piece.row + move.value[0],
-                           piece.col + move.value[1]] not in [piece.id.value, piece.id.value.capitalize(),
-                                                              ' ']:
-                if state.board[new_row, new_col] == ' ':
-                    moves.append(move)
-                    for next_move in Move:
-                        if (next_move.value[0], next_move.value[1]) != (-move.value[0], -move.value[1]):
-                            self.is_valid_jump(state, CheckersPiece(piece.id, new_row, new_col), next_move, moves)
-                    return True, moves
-        return False, moves
-
-    def is_valid_king_move(self, state: CheckersState, piece: CheckersPiece, move: Move, moves: List = []) -> Tuple[bool, List[Move]]:
-        new_row = piece.row + move.value[0]
-        new_col = piece.col + move.value[1]
-        if self.on_board(new_row, new_col):
-            if state.board[new_row, new_col] == ' ':
-                moves.append(move)
-                for next_move in Move:
-                    if (next_move.value[0], next_move.value[1]) != (-move.value[0], -move.value[1]):
-                        self.is_valid_king_move(state, CheckersPiece(piece.id, new_row, new_col), next_move, moves)
-                return True, moves
-            elif state.board[new_row, new_col] not in [piece.id.value, piece.id.value.capitalize(), ' ']:  # opposite piece
-                pass  # jump and in this case king can make a second move if it can kill opposite piece
-            else:     # team piece
-                return False, moves
-        return False, moves
-
-    def on_board(self, row: int, col: int) -> bool:
-        return 0 <= row < self.board_shape[0] and 0 <= col < self.board_shape[1]
+    def find_beat_chains_for_piece(self, board: np.ndarray, piece: CheckersPiece) -> Sequence[Sequence[Tuple[int, int]]]:
+        """
+        Returns possible beat routes for piece.
+        """
+        jumps = []
+        for jump in piece.jumps(board):
+            new_board, moved_piece = piece.move_to(board, *jump)
+            jumps.extend([jump, *chain] for chain in self.find_beat_chains_for_piece(new_board, moved_piece) or [[]])
+        return jumps
 
     def switch_players(self) -> 'CheckersGame':
-        for piece in self.pieces:
-            piece.turn = np.logical_not(piece.turn)
-        return CheckersGame(self.board_shape)
+        return CheckersGame(self.board_shape, self._opponent_color, self._player_color)
 
     def take_action(self, state: CheckersState, action: CheckersAction) -> CheckersState:
-        new_state = action.apply(state)
-        print(new_state.show())
+        new_state = action.apply()
         return new_state
 
-    def reward(self, state: CheckersState) -> float:
-        assert self.is_terminal_state(state)
-        return self._value_for_terminal(state)
-
     def _value_for_terminal(self, state: CheckersState) -> float:
-        #unique, counts = np.unique(state.board, return_counts=True)
-        if (Figure.WHITE_PIECE.value or Figure.WHITE_PIECE.value.capitalize()) not in state.board:
-            return 1
-        if (Figure.BLACK_PIECE.value or Figure.BLACK_PIECE.value.capitalize()) not in state.board:
-            return -1
+        colors_on_board = {p.color for p in np.unique(state.board[state.board != EMPTY_SYMBOL])}
+        if len(colors_on_board) == 1:
+            return 1 if self._player_color in colors_on_board else -1
         return 0
 
+    def _is_opponent(self, color: PlayerColor) -> bool:
+        return color == self._opponent_color
+
     def is_terminal_state(self, state: CheckersState) -> bool:
-        return self.no_actions or self._value_for_terminal(state) in [-1, 1]
+        return self._value_for_terminal(state) in [-1, 1] or not any(self.actions_for(
+            state, self._is_opponent(state.current_player_color)))

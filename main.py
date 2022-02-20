@@ -9,7 +9,6 @@ from algorithms.monte_carlo_tree_search import MCTS
 from games.tic_tac_toe.ultimate_tic_tac_toe.game import UltimateTicTacToeGame
 from match import Match
 
-
 if __name__ == "__main__":
     game = CheckersGame()
     player_a = RandomPlayer(game)
