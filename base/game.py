@@ -1,6 +1,6 @@
 from base.state import State
 from base.action import Action
-from typing import List, TypeVar, Generic, Optional, Tuple
+from typing import Iterable, List, TypeVar, Generic, Optional, Tuple
 from abc import ABC, abstractmethod
 from PIL.Image import Image
 
@@ -13,7 +13,7 @@ class Game(ABC, Generic[S, A]):
         self.initial_state = initial_state
 
     @abstractmethod
-    def actions_for(self, state: S, is_opponent: bool) -> List[A]:
+    def actions_for(self, state: S, is_opponent: bool) -> Iterable[A]:
         """Generates actions to take from the given state"""
         raise NotImplementedError
 
