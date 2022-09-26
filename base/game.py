@@ -24,7 +24,8 @@ class Game(ABC, Generic[S, A]):
 
     def reward(self, state: S) -> float:
         """Returns reward for a terminal state. Raises exception if state is not terminal"""
-        assert self.is_terminal_state(state), "This method should be called only on the terminal states!"
+        assert self.is_terminal_state(
+            state), "This method should be called only on the terminal states!"
         return self._value_for_terminal(state)
 
     @abstractmethod
@@ -41,3 +42,7 @@ class Game(ABC, Generic[S, A]):
 
     def to_image(self, state: S, size: Tuple[int, int] = (800, 800)) -> Optional[Image]:
         """Converts state to its image representation."""
+
+    @abstractmethod
+    def select_winner(self, player_a, player_b):
+        """Returns winner in the game"""
