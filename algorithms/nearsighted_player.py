@@ -1,12 +1,12 @@
 from typing import List, Tuple
 
 from base.action import Action
-from base.bot import Bot, G
+from base.bot import Bot, G, A
 from base.state import State
 from random import choice
 
 
-class NearSighted(Bot):
+class NearSighted(Bot[G, A]):
     def __init__(self, game: G, is_opponent: bool = False):
         self.is_opponent = is_opponent
         super().__init__(game)
@@ -22,7 +22,8 @@ class NearSighted(Bot):
 
         # every action leads to the defeat
         else:
-            self.best_action = choice(self.game.actions_for(state, is_opponent=self.is_opponent))
+            self.best_action = choice(self.game.actions_for(
+                state, is_opponent=self.is_opponent))
 
     def is_action_reasonable(self, curr_state: State, look_forward: int, is_opponent: bool) -> bool:
         if look_forward == 0:

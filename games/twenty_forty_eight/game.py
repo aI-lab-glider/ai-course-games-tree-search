@@ -16,7 +16,8 @@ class TwentyFortyEightGame(Game):
         super().__init__(initial_state)
 
     def initial_game_state(self) -> TwentyFortyEightState:
-        state = TwentyFortyEightState(board=np.zeros((self.board_dim, self.board_dim), dtype=int))
+        state = TwentyFortyEightState(board=np.zeros(
+            (self.board_dim, self.board_dim), dtype=int))
         for _ in range(2):
             action = random.choice(self.actions_for(state, is_opponent=True))
             state = self.take_action(state, action)
@@ -44,7 +45,8 @@ class TwentyFortyEightGame(Game):
             Direction.LEFT: (0, -1, product(range(self.board_dim), range(1, self.board_dim))),
             Direction.RIGHT: (0, 1, product(range(self.board_dim), range(self.board_dim-1))),
             Direction.UP: (-1, 0, product(range(1, self.board_dim), range(self.board_dim))),
-            Direction.DOWN: (1, 0, product(range(self.board_dim-1), range(self.board_dim)))
+            Direction.DOWN: (1, 0, product(
+                range(self.board_dim-1), range(self.board_dim)))
         }[direction]
         return any(state.board[row, col] != 0 and state.board[row + row_offset, col + col_offset] == 0 for row, col in
                    search_space)
@@ -64,7 +66,7 @@ class TwentyFortyEightGame(Game):
                     action: TwentyFortyEightPlayerAction | TwentyFortyEightOpponentAction) -> TwentyFortyEightState:
         return action.apply(state)
 
-    def _value_for_terminal(self, state: TwentyFortyEightState) -> int:
+    def value_for_terminal(self, state: TwentyFortyEightState) -> int:
         if 2048 in state.board:
             return 1
         return -1
@@ -95,6 +97,7 @@ class TwentyFortyEightGame(Game):
             for x, cell in enumerate(row):
                 if cell != 0:
                     grid_drawer.draw_rectangle((x, y), block_color[cell])
-                    grid_drawer.draw_text(str(cell), (x, y), fill=(51, 44, 35), font=font(cell))
+                    grid_drawer.draw_text(str(cell), (x, y), fill=(
+                        51, 44, 35), font=font(cell))
 
         return image

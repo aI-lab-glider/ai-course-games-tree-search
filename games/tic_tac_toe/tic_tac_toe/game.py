@@ -25,7 +25,7 @@ class TicTacToeGame(Game[TicTacToeState, TicTacToeAction]):
     def switch_players(self):
         return TicTacToeGame(player_sign=self.opponent_sign, opponent_sign=self.player_sign)
 
-    def _value_for_terminal(self, state: TicTacToeState):
+    def value_for_terminal(self, state: TicTacToeState):
         return self.block_logic.value_for_terminal(state.board)
 
     def actions_for(self, state: TicTacToeState, is_opponent: bool) -> List[TicTacToeAction]:
