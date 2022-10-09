@@ -28,6 +28,12 @@ class CompetitionResults:
     opponent: BotResults
     matches_played: int
 
+    def winner_results(self):
+        if self.player.victories > self.opponent.victories:
+            return self.player
+        if self.player.victories < self.opponent.victories:
+            return self.opponent
+
     def __rich__(self):
         pv, ov = self.player.victories, self.opponent.victories
         border_style = "yellow"
@@ -44,7 +50,10 @@ class CompetitionResults:
         )
 
 
-def run_competition(bot_a: Bot | tuple[Bot, str], bot_b: Bot | tuple[Bot, str], game: Game, params: CompetitionParams) -> CompetitionResults:
+def run_competition(
+        bot_a: Bot | tuple[Bot, str],
+        bot_b: Bot | tuple[Bot, str],
+        game: Game, params: CompetitionParams) -> CompetitionResults:
     bots, bot_names = list(zip(*assign_names_to_bots([bot_a, bot_b])))
     victories = defaultdict(int)
     for _ in range(params.n_matches):
