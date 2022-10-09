@@ -6,19 +6,21 @@ import random
 
 
 class MonteCarlo(Bot):
-    def __init__(self, game: G, n_rollouts: int):
+    def __init__(self, n_rollouts: int):
         self.n_rollouts = n_rollouts
-        super().__init__(game)
+        super().__init__()
 
-    def choose_action(self, from_state: State) -> None:
+    def _choose_action(self, from_state: State) -> None:
         action_values = self._evaluate_actions(from_state)
         self.best_action = max(action_values, key=action_values.get)
 
     def _evaluate_actions(self, from_state: State) -> Dict[Action, float]:
         action_values = {}
         for _ in range(self.n_rollouts):
-            action = random.choice(self.game.actions_for(from_state, is_opponent=False))
-            result_state = self._rollout(self.game.take_action(from_state, action))
+            action = random.choice(self.game.actions_for(
+                from_state, is_opponent=False))
+            result_state = self._rollout(
+                self.game.take_action(from_state, action))
             action_value = self.game.reward(result_state)
             if action in action_values:
                 action_values[action] += action_value

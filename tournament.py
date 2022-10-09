@@ -17,14 +17,15 @@ def print_summary(competitions_results: list[CompetitionResults]):
 
 if __name__ == '__main__':
     games: list[Game] = [TicTacToeGame()]
-    bot_factories = [
-        lambda game: MCTS(game),
-        lambda game: MonteCarlo(game, 10),
-        lambda game: RandomPlayer(game),
-        lambda game: NearSighted(game)
+    bots = [
+        MCTS(),
+        (MonteCarlo(10), 'MonetCarlo(n_rollouts=10)'),
+        (MonteCarlo(10), 'MonetCarlo(n_rollouts=50)'),
+        RandomPlayer(),
+        NearSighted()
     ]
     params = CompetitionParams(1, 1)
     for game in games:
         results = [run_competition(bot_a_type, bot_b_type, game, params)
-                   for bot_a_type, bot_b_type in combinations(bot_factories, 2)]
+                   for bot_a_type, bot_b_type in combinations(bots, 2)]
         print_summary(results)

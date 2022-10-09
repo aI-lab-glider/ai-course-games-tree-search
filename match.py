@@ -34,7 +34,7 @@ class Match(Generic[TPlayer, TOpponent]):
     def _next_move(self, player: TPlayer | TOpponent) -> TState:
         with stopit.ThreadingTimeout(self._move_timeout) as to_ctx_mgr:
             assert to_ctx_mgr.state == to_ctx_mgr.EXECUTING
-            _ = player.choose_action(self.current_state)
+            _ = player._choose_action(self.current_state)
         print("timed out?", to_ctx_mgr.state == to_ctx_mgr.TIMED_OUT)
         action = player.best_action or random.choice(
             self.game.actions_for(self.current_state, is_opponent=self.turn))

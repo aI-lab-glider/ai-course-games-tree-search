@@ -8,7 +8,7 @@ from typing import Tuple
 
 
 class Minimax(Bot):
-    def choose_action(self, state: State) -> None:
+    def _choose_action(self, state: State) -> None:
         self.best_action = self._minimax(state, is_opponent=False)[0]
 
     def _minimax(self, state: State, is_opponent: bool) -> Tuple[Action | None, float]:

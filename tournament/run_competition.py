@@ -1,13 +1,13 @@
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Iterable
+
+from numpy import iterable
 
 from base.bot import Bot
 from base.game import Game
 from match import Match
 from rich.panel import Panel
-
-BotFactory = Callable[[Game], Bot]
 
 
 @dataclass
@@ -44,13 +44,12 @@ class CompetitionResults:
         )
 
 
-def run_competition(bot_factory_a: BotFactory, bot_factory_b: BotFactory, game: Game, params: CompetitionParams) -> CompetitionResults:
-    bot_names = [type(f(game)).__name__ for f in [
-        bot_factory_a, bot_factory_b]]
+def run_competition(bot_a: Bot | tuple[Bot, str], bot_b: Bot | tuple[Bot, str], game: Game, params: CompetitionParams) -> CompetitionResults:
+    bots, bot_names = list(zip(*assign_names_to_bots([bot_a, bot_b])))
     victories = defaultdict(int)
     for _ in range(params.n_matches):
-        bot_a, bot_b = bot_factory_a(
-            game), bot_factory_b(game.switch_players())
+        bot_a, bot_b = bots[0].fit(
+            game), bots[1].fit(game.switch_players())
         match = Match(game, bot_a, bot_b, move_timeout=params.move_timeout)
         winner = match.play()
         if winner:
@@ -61,3 +60,9 @@ def run_competition(bot_factory_a: BotFactory, bot_factory_b: BotFactory, game: 
         victories[name]
     ) for name in bot_names
     ], matches_played=params.n_matches)
+
+
+def assign_names_to_bots(bots: Iterable[Bot | tuple[Bot, str]]) -> tuple[tuple[Bot, str]]:
+    return [b if isinstance(b, tuple) else (b, type(b).__name__)
+            for b in bots
+            ]

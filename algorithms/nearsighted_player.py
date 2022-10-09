@@ -7,11 +7,11 @@ from random import choice
 
 
 class NearSighted(Bot[G, A]):
-    def __init__(self, game: G, is_opponent: bool = False):
+    def __init__(self, is_opponent: bool = False):
         self.is_opponent = is_opponent
-        super().__init__(game)
+        super().__init__()
 
-    def choose_action(self, state: State) -> None:
+    def _choose_action(self, state: State) -> None:
 
         reasonable_actions, winning_action = self.get_actions(state, 1)
 

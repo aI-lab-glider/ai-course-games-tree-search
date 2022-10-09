@@ -8,8 +8,9 @@ from typing import Tuple
 
 
 class MinimaxAlphaBeta(Bot):
-    def choose_action(self, state: State) -> None:
-        self.best_action = self._minimax(state, -math.inf, math.inf, is_opponent=False)[0]
+    def _choose_action(self, state: State) -> None:
+        self.best_action = self._minimax(
+            state, -math.inf, math.inf, is_opponent=False)[0]
 
     def _minimax(self, state: State, alpha: float, beta: float, is_opponent: bool) -> Tuple[Action | None, float]:
         if self.game.is_terminal_state(state):
@@ -29,7 +30,8 @@ class MinimaxAlphaBeta(Bot):
         best_action = None
         for action in self.game.actions_for(from_state, is_opponent):
             new_state = self.game.take_action(from_state, action)
-            state_value = self._minimax(new_state, alpha, beta, not is_opponent)[1]
+            state_value = self._minimax(
+                new_state, alpha, beta, not is_opponent)[1]
             if selection_condition(state_value, best_state_value):
                 best_state_value, best_action = state_value, action
             if selection_condition(state_value, letter):

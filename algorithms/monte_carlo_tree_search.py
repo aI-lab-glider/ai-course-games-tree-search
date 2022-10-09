@@ -22,29 +22,32 @@ class Node(Generic[A]):
 
 
 class MCTS(Bot[G, A]):
-    def __init__(self, game: G, n_rollouts=1000, use_cache=True):
-        super().__init__(game)
+    def __init__(self, n_rollouts=1000, use_cache=True):
+        super().__init__()
         self.n_rollouts = n_rollouts
         self.use_cache = use_cache
         self.root: Optional[Node[A]] = None
 
-    def choose_action(self, state: State) -> None:
+    def _choose_action(self, state: State) -> None:
         self.root = self._find_root(state)
         for _ in range(self.n_rollouts):
             expanded_node = self._expand(*self._select(self.root, False))
             reward = self._playout(expanded_node.game_state)
             self._propagate(reward, expanded_node)
-        self.best_action = max(self.root.children, key=lambda n: n.accumulated_reward).action
+        self.best_action = max(
+            self.root.children, key=lambda n: n.accumulated_reward).action
 
     def _find_root(self, state: State) -> Node:
         if self.root is None or not self.use_cache:  # first call
             return Node(game_state=state)
 
-        opponent_node = next((n for n in self.root.children if n.action == self.best_action), None)
+        opponent_node = next(
+            (n for n in self.root.children if n.action == self.best_action), None)
         if opponent_node is None:
             # __eq__() method was implemented incorrectly in action class, or best_action was not updated during last call
             return Node(game_state=state)
-        current_node = next((n for n in opponent_node.children if n.game_state == state), None)
+        current_node = next(
+            (n for n in opponent_node.children if n.game_state == state), None)
         return current_node or Node(game_state=state)
 
     def _select(self, node: Node, is_opponent: bool) -> Tuple[Node, bool]:
@@ -57,7 +60,8 @@ class MCTS(Bot[G, A]):
         if self.game.is_terminal_state(node.game_state):
             return node
         node.children = [
-            Node(parent=node, game_state=self.game.take_action(node.game_state, a), action=a)
+            Node(parent=node, game_state=self.game.take_action(
+                node.game_state, a), action=a)
             for a in self.game.actions_for(node.game_state, is_oponnent)
         ]
         return random.choice(node.children)
@@ -65,7 +69,8 @@ class MCTS(Bot[G, A]):
     def _playout(self, current_state: State) -> float:
         is_opponent = True
         while not self.game.is_terminal_state(current_state):
-            action = random.choice(self.game.actions_for(current_state, is_opponent))
+            action = random.choice(
+                self.game.actions_for(current_state, is_opponent))
             current_state = self.game.take_action(current_state, action)
             is_opponent = not is_opponent
         return self.game.reward(current_state)

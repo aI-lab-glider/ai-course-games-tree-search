@@ -8,11 +8,11 @@ from typing import Tuple
 
 
 class MinimaxDepth(HeuristicBot[A, G, H]):
-    def __init__(self, max_depth: int, game: G, heuristic: H):
-        super().__init__(game, heuristic)
+    def __init__(self, max_depth: int, heuristic: H):
+        super().__init__(heuristic)
         self.max_depth = max_depth
 
-    def choose_action(self, state: State) -> None:
+    def _choose_action(self, state: State) -> None:
         self.best_action, _ = self._minimax(state, is_opponent=False, depth=0)
 
     def _minimax(self, state: State, is_opponent: bool, depth: int) -> Tuple[A | None, float]:
@@ -31,7 +31,8 @@ class MinimaxDepth(HeuristicBot[A, G, H]):
         best_action = None
         for action in self.game.actions_for(from_state, is_opponent):
             new_state = self.game.take_action(from_state, action)
-            state_value = self._minimax(new_state, not is_opponent, depth + 1)[1]
+            state_value = self._minimax(
+                new_state, not is_opponent, depth + 1)[1]
             if selection_condition(state_value, best_state_value):
                 best_state_value, best_action = state_value, action
         return best_action, best_state_value
