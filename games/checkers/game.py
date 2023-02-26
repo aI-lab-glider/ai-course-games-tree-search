@@ -4,7 +4,7 @@ from games.checkers.state import CheckersState
 from games.checkers.piece import BlackPiece, CheckersPiece, PlayerColor, WhitePiece
 from games.checkers.action import CheckersAction
 import numpy as np
-from typing import Sequence, Tuple
+from typing import Sequence, Tuple, Union
 from itertools import product
 
 
@@ -59,7 +59,8 @@ class CheckersGame(Game[CheckersState, CheckersAction]):
         jumps = []
         for jump in piece.jumps(board):
             new_board, moved_piece = piece.move_to(board, *jump)
-            jumps.extend([jump, *chain] for chain in self.find_beat_chains_for_piece(new_board, moved_piece) or [[]])
+            jumps.extend([jump, *chain]
+                         for chain in self.find_beat_chains_for_piece(new_board, moved_piece) or [[]])
         return jumps
 
     def switch_players(self) -> 'CheckersGame':
@@ -69,8 +70,9 @@ class CheckersGame(Game[CheckersState, CheckersAction]):
         new_state = action.apply()
         return new_state
 
-    def _value_for_terminal(self, state: CheckersState) -> float:
-        colors_on_board = {p.color for p in np.unique(state.board[state.board != EMPTY_SYMBOL])}
+    def value_for_terminal(self, state: CheckersState) -> float:
+        colors_on_board = {p.color for p in np.unique(
+            state.board[state.board != EMPTY_SYMBOL])}
         if len(colors_on_board) == 1:
             return 1 if self._player_color in colors_on_board else -1
         return 0
@@ -79,5 +81,5 @@ class CheckersGame(Game[CheckersState, CheckersAction]):
         return color == self._opponent_color
 
     def is_terminal_state(self, state: CheckersState) -> bool:
-        return self._value_for_terminal(state) in [-1, 1] or not any(self.actions_for(
+        return self.value_for_terminal(state) in [-1, 1] or not any(self.actions_for(
             state, self._is_opponent(state.current_player_color)))

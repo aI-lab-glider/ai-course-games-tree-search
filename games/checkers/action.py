@@ -29,11 +29,12 @@ class CheckersAction(Action):
         return CheckersState(result_board, get_opposite_color(self._piece.color))
 
     def _is_on_the_board_edge(self, piece: CheckersPiece):
-        board_edge_row = 0 if piece.color == PlayerColor.BLACK else self.state.board.shape[0] - 1
+        board_edge_row = 0 if piece.color == PlayerColor.BLACK else self.state.board.shape[
+            0] - 1
         return piece.row == board_edge_row
 
     def __hash__(self):
-        return hash((set(self.position_chain), self._piece))
+        return hash((frozenset(self.position_chain), self._piece))
 
     def __eq__(self, other):
         return type(other) == type(self) and other.position_chain == self.position_chain\

@@ -5,9 +5,10 @@ from base.state import State
 
 
 class RandomPlayer(Bot):
-    def __init__(self, game: G, is_opponent: bool = False):
+    def __init__(self, is_opponent: bool = False):
         self.is_opponent = is_opponent
-        super().__init__(game)
+        super().__init__()
 
-    def choose_action(self, state: State) -> None:
-        self.best_action = choice(self.game.actions_for(state, self.is_opponent))
+    def _choose_action(self, state: State) -> None:
+        self.best_action = choice(
+            self.game.actions_for(state, self.is_opponent))

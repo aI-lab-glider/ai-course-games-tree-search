@@ -1,0 +1,7 @@
+from algorithms.minimax import Minimax
+from algorithms.minimax_alpha_beta import MinimaxAlphaBeta
+from algorithms.minimax_depth import MinimaxDepth
+from algorithms.monte_carlo import MonteCarlo
+from algorithms.monte_carlo_tree_search import MCTS
+from algorithms.nearsighted_player import NearSighted
+from algorithms.random_player import RandomPlayer

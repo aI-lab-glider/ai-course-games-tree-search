@@ -6,6 +6,7 @@ from PIL.Image import Image
 
 S = TypeVar('S', bound=State)
 A = TypeVar('A', bound=Action)
+G = TypeVar('G', bound='Game')
 
 
 class Game(ABC, Generic[S, A]):
@@ -24,11 +25,12 @@ class Game(ABC, Generic[S, A]):
 
     def reward(self, state: S) -> float:
         """Returns reward for a terminal state. Raises exception if state is not terminal"""
-        assert self.is_terminal_state(state), "This method should be called only on the terminal states!"
-        return self._value_for_terminal(state)
+        assert self.is_terminal_state(
+            state), "This method should be called only on the terminal states!"
+        return self.value_for_terminal(state)
 
     @abstractmethod
-    def _value_for_terminal(self, state: S) -> float:
+    def value_for_terminal(self, state: S) -> 1 | -1 | 0:
         """Returns value of a terminal state"""
 
     @abstractmethod
@@ -36,8 +38,12 @@ class Game(ABC, Generic[S, A]):
         """Returns if given state is a terminal state"""
 
     @abstractmethod
-    def switch_players(self):
+    def switch_players(self: G) -> G:
         """Returns game with switched players"""
 
     def to_image(self, state: S, size: Tuple[int, int] = (800, 800)) -> Optional[Image]:
         """Converts state to its image representation."""
+
+    def is_tie(self, state: S) -> bool:
+        return (self.is_terminal_state(state)
+                and self.value_for_terminal(state) == 0)

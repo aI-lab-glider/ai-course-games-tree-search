@@ -66,7 +66,7 @@ class UltimateTicTacToeGame(Game[UTTTState, UTTTAction]):
     def switch_players(self) -> 'UltimateTicTacToeGame':
         return UltimateTicTacToeGame(player_sign=self.opponent_sign, opponent_sign=self.player_sign)
 
-    def _value_for_terminal(self, state: UTTTState):
+    def value_for_terminal(self, state: UTTTState):
         compressed_board = np.reshape([self._find_winner_sign_in_block(state.board[block])
                                        for block in range(self.blocks_count)], self.block_shape)
 
@@ -78,9 +78,11 @@ class UltimateTicTacToeGame(Game[UTTTState, UTTTAction]):
     def to_image(self, state: UTTTState):
         img_size = (800, 800)
         img = Image.new("RGB", img_size, (0, 0, 0))
-        w, h = block_img_size = tuple(map(lambda x: int(x * self.block_shape[0] / self.blocks_count), img_size))
+        w, h = block_img_size = tuple(
+            map(lambda x: int(x * self.block_shape[0] / self.blocks_count), img_size))
         for block in range(self.blocks_count):
-            block_img = self.block_logic.to_image(state.board[block], block_img_size)
+            block_img = self.block_logic.to_image(
+                state.board[block], block_img_size)
             block_img_coords = (w * (block % 3), h * (block // 3))
             img.paste(block_img, block_img_coords)
         return img
